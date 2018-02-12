@@ -3,6 +3,7 @@ package pt.ulisboa.ist.sirs.securesmsserver.fragments;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -26,6 +27,8 @@ public class ClientsFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private ClientAdapter clientsAdapter;
     private LinearLayoutManager mLayoutManager;
+
+    private FloatingActionButton fab_add_client;
 
     private OnClientsFragmentInteractionListener mListener;
 
@@ -63,6 +66,8 @@ public class ClientsFragment extends Fragment {
 
         setRecyclerView(rootView);
 
+        setFab(rootView);
+
         return rootView;
     }
 
@@ -88,6 +93,16 @@ public class ClientsFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    private void setFab(View view) {
+        fab_add_client = (FloatingActionButton) view.findViewById(R.id.fab_clients);
+        fab_add_client.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // TODO: perform an action on floating button clicked
+            }
+        });
     }
 
     private void setRecyclerView(View view) {
