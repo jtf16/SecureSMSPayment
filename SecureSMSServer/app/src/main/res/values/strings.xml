@@ -6,6 +6,13 @@
     <string name="movements">Movements</string>
     <string name="phones">Phones</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- DialogFragments EditTexts strings -->
+    <string name="IBAN">IBAN</string>
+    <string name="balance">Balance</string>
+    <string name="phone_number">Phone Number</string>
+
+    <!-- DialogFragments Buttons strings -->
+    <string name="insert_client">Add Client</string>
+    <string name="insert_phone">Add Phone</string>
+
 </resources>
