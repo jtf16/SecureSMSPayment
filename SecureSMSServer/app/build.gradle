@@ -27,4 +27,6 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     // TabLayout and ViewPager
     implementation 'com.android.support:design:26.1.0'
+    // StringUtils
+    compile 'org.apache.commons:commons-lang3:3.0'
 }
