@@ -4,11 +4,14 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import pt.ulisboa.ist.sirs.securesmsserver.R;
+import pt.ulisboa.ist.sirs.securesmsserver.recyclerviews.adapters.ClientAdapter;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -20,6 +23,10 @@ import pt.ulisboa.ist.sirs.securesmsserver.R;
  */
 public class ClientsFragment extends Fragment {
 
+    private RecyclerView mRecyclerView;
+    private ClientAdapter clientsAdapter;
+    private LinearLayoutManager mLayoutManager;
+
     private OnClientsFragmentInteractionListener mListener;
 
     public ClientsFragment() {
@@ -29,6 +36,7 @@ public class ClientsFragment extends Fragment {
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
+     *
      * @return A new instance of fragment ClientsFragment.
      */
     public static ClientsFragment newInstance() {
@@ -50,7 +58,12 @@ public class ClientsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_clients, container, false);
+        View rootView = inflater.inflate(
+                R.layout.fragment_clients, container, false);
+
+        setRecyclerView(rootView);
+
+        return rootView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -75,6 +88,17 @@ public class ClientsFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    private void setRecyclerView(View view) {
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.clients_list);
+
+        // use a linear layout manager
+        mLayoutManager = new LinearLayoutManager(getActivity());
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        // specify an adapter (see also next example)
+        clientsAdapter = new ClientAdapter(mLayoutManager);
+        mRecyclerView.setAdapter(clientsAdapter);
     }
 
     /**
