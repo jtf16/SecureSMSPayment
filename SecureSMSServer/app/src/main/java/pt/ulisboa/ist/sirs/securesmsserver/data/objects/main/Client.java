@@ -1,14 +1,27 @@
 package pt.ulisboa.ist.sirs.securesmsserver.data.objects.main;
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Index;
+import android.arch.persistence.room.PrimaryKey;
+
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Entity(tableName = "Client",
+        indices = {@Index(value = {"IBAN"}, unique = true)})
 public class Client {
 
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "id")
     private int uid;
+
+    @ColumnInfo(name = "IBAN")
     private String IBAN;
+
+    @ColumnInfo(name = "balance")
     private float balance;
 
     public int getUid() {
