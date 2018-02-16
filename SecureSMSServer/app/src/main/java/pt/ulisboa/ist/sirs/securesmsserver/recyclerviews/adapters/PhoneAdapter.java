@@ -55,7 +55,7 @@ public class PhoneAdapter extends RecyclerView.Adapter<PhoneViewHolder> {
      *
      * @param newPhones
      */
-    public void setPhone(List<Phone> newPhones) {
+    public void setPhones(List<Phone> newPhones) {
         PhoneNumbersDiffUtil phoneNumbersDiffUtil =
                 new PhoneNumbersDiffUtil(phones, newPhones);
         DiffUtil.DiffResult diffResult =

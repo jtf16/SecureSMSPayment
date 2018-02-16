@@ -7,6 +7,7 @@ import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
 
 import pt.ulisboa.ist.sirs.securesmsserver.data.daos.ClientDao;
+import pt.ulisboa.ist.sirs.securesmsserver.data.daos.JoinQueryDao;
 import pt.ulisboa.ist.sirs.securesmsserver.data.daos.MovementDao;
 import pt.ulisboa.ist.sirs.securesmsserver.data.daos.PhoneDao;
 import pt.ulisboa.ist.sirs.securesmsserver.data.objects.main.Client;
@@ -27,6 +28,8 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract MovementDao movementDao();
     // PhoneDao is a class annotated with @Dao.
     public abstract PhoneDao phoneDao();
+    // JoinQueryDao is a class annotated with @Dao.
+    public abstract JoinQueryDao joinQueryDao();
 
     public static AppDatabase getAppDatabase(Context context) {
         if (INSTANCE == null) {

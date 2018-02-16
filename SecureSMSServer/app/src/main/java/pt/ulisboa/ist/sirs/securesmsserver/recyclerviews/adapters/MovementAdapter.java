@@ -55,7 +55,7 @@ public class MovementAdapter extends RecyclerView.Adapter<MovementViewHolder> {
      *
      * @param newMovements
      */
-    public void setMovementClients(List<ClientMovement> newMovements) {
+    public void setClientMovements(List<ClientMovement> newMovements) {
         ClientMovementsDiffUtil clientMovementsDiffUtil =
                 new ClientMovementsDiffUtil(clientMovements, newMovements);
         DiffUtil.DiffResult diffResult =
