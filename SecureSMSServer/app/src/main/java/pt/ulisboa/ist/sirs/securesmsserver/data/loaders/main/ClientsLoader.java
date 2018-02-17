@@ -1,4 +1,4 @@
-package pt.ulisboa.ist.sirs.securesmsserver.data.loaders;
+package pt.ulisboa.ist.sirs.securesmsserver.data.loaders.main;
 
 import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
@@ -9,18 +9,19 @@ import java.util.List;
 
 import pt.ulisboa.ist.sirs.securesmsserver.InterestingConfigChanges;
 import pt.ulisboa.ist.sirs.securesmsserver.data.AppDatabase;
-import pt.ulisboa.ist.sirs.securesmsserver.data.objects.secundary.ClientMovement;
+import pt.ulisboa.ist.sirs.securesmsserver.data.objects.main.Client;
+import pt.ulisboa.ist.sirs.securesmsserver.data.repositories.ClientRepository;
 
-public class ClientMovementsLoader extends
-        AsyncTaskLoader<List<ClientMovement>> {
+public class ClientsLoader extends
+        AsyncTaskLoader<List<Client>> {
 
-    private List<ClientMovement> mData;
+    private List<Client> mData;
 
     final InterestingConfigChanges mLastConfig = new InterestingConfigChanges();
 
     private AppDatabase appDatabase;
 
-    public ClientMovementsLoader(Context context) {
+    public ClientsLoader(Context context) {
         super(context);
         appDatabase = AppDatabase.getAppDatabase(context);
     }
@@ -51,9 +52,9 @@ public class ClientMovementsLoader extends
      * @see #onCanceled
      */
     @Override
-    public List<ClientMovement> loadInBackground() {
-        // Retrieve all known clientMovements.
-        return appDatabase.joinQueryDao().loadAllClientMovements();
+    public List<Client> loadInBackground() {
+        // Retrieve all known clients.
+        return appDatabase.clientDao().loadAllClients();
     }
 
     /**
@@ -62,7 +63,7 @@ public class ClientMovementsLoader extends
      * here just adds a little more logic.
      */
     @Override
-    public void deliverResult(List<ClientMovement> data) {
+    public void deliverResult(List<Client> data) {
         if (isReset()) {
             // An async query came in while the loader is stopped.  We
             // don't need the result.
@@ -70,7 +71,7 @@ public class ClientMovementsLoader extends
                 onReleaseResources(data);
             }
         }
-        List<ClientMovement> oldData = mData;
+        List<Client> oldData = mData;
         mData = data;
 
         if (isStarted()) {
@@ -122,7 +123,7 @@ public class ClientMovementsLoader extends
      * Handles a request to cancel a load.
      */
     @Override
-    public void onCanceled(List<ClientMovement> data) {
+    public void onCanceled(List<Client> data) {
         super.onCanceled(data);
 
         // At this point we can release the resources associated with 'data'
@@ -152,7 +153,7 @@ public class ClientMovementsLoader extends
      * Helper function to take care of releasing resources associated
      * with an actively loaded data set.
      */
-    protected void onReleaseResources(List<ClientMovement> data) {
+    protected void onReleaseResources(List<Client> data) {
         // For a simple List<> there is nothing to do.  For something
         // like a Cursor, we would close it here.
     }

@@ -6,10 +6,14 @@ import android.arch.persistence.room.RoomDatabase;
 import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
 
-import pt.ulisboa.ist.sirs.securesmsserver.data.daos.ClientDao;
-import pt.ulisboa.ist.sirs.securesmsserver.data.daos.JoinQueryDao;
-import pt.ulisboa.ist.sirs.securesmsserver.data.daos.MovementDao;
-import pt.ulisboa.ist.sirs.securesmsserver.data.daos.PhoneDao;
+import pt.ulisboa.ist.sirs.securesmsserver.data.daos.live.LiveClientDao;
+import pt.ulisboa.ist.sirs.securesmsserver.data.daos.live.LiveJoinQueryDao;
+import pt.ulisboa.ist.sirs.securesmsserver.data.daos.live.LiveMovementDao;
+import pt.ulisboa.ist.sirs.securesmsserver.data.daos.live.LivePhoneDao;
+import pt.ulisboa.ist.sirs.securesmsserver.data.daos.main.ClientDao;
+import pt.ulisboa.ist.sirs.securesmsserver.data.daos.main.JoinQueryDao;
+import pt.ulisboa.ist.sirs.securesmsserver.data.daos.main.MovementDao;
+import pt.ulisboa.ist.sirs.securesmsserver.data.daos.main.PhoneDao;
 import pt.ulisboa.ist.sirs.securesmsserver.data.objects.main.Client;
 import pt.ulisboa.ist.sirs.securesmsserver.data.objects.main.Movement;
 import pt.ulisboa.ist.sirs.securesmsserver.data.objects.main.Phone;
@@ -24,12 +28,20 @@ public abstract class AppDatabase extends RoomDatabase {
 
     // ClientDao is a class annotated with @Dao.
     public abstract ClientDao clientDao();
+    // LiveClientDao is a class annotated with @Dao.
+    public abstract LiveClientDao liveClientDao();
     // MovementDao is a class annotated with @Dao.
     public abstract MovementDao movementDao();
+    // LiveMovementDao is a class annotated with @Dao.
+    public abstract LiveMovementDao liveMovementDao();
     // PhoneDao is a class annotated with @Dao.
     public abstract PhoneDao phoneDao();
+    // LivePhoneDao is a class annotated with @Dao.
+    public abstract LivePhoneDao livePhoneDao();
     // JoinQueryDao is a class annotated with @Dao.
     public abstract JoinQueryDao joinQueryDao();
+    // LiveJoinQueryDao is a class annotated with @Dao.
+    public abstract LiveJoinQueryDao liveJoinQueryDao();
 
     public static AppDatabase getAppDatabase(Context context) {
         if (INSTANCE == null) {
