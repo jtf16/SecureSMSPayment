@@ -9,6 +9,9 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import pt.ulisboa.ist.sirs.securesmsserver.R;
+import pt.ulisboa.ist.sirs.securesmsserver.data.objects.main.Client;
+import pt.ulisboa.ist.sirs.securesmsserver.data.objects.main.Phone;
+import pt.ulisboa.ist.sirs.securesmsserver.data.repositories.TransactionRepository;
 
 /**
  * A simple {@link DialogFragment} subclass.
@@ -21,6 +24,8 @@ public class InsertClientFragment extends DialogFragment {
     private EditText editTextBalance;
     private EditText editTextPhone;
     private Button btnInsertClient;
+
+    private TransactionRepository transactionRepository;
 
     public InsertClientFragment() {
         // Required empty public constructor
@@ -41,7 +46,38 @@ public class InsertClientFragment extends DialogFragment {
 
     /** Called when the user taps the Insert Client button */
     public void doInsertClient() {
+        transactionRepository.insertClientAndPhones(getClient(), getPhone());
 
+        dismiss();
+    }
+
+    private Client getClient() {
+        Client client = null;
+
+        if (editTextIBAN.getText().toString().length() > 0 &&
+                editTextBalance.getText().toString().length() > 0) {
+            String iban = editTextIBAN.getText().toString();
+            float balance = Float.valueOf(editTextBalance.getText().toString());
+
+            client = new Client();
+
+            client.setIBAN(iban);
+            client.setBalance(balance);
+        }
+        return client;
+    }
+
+    private Phone getPhone() {
+        Phone phone = null;
+
+        if (editTextPhone.getText().toString().length() > 0) {
+            int phone_number = Integer.valueOf(editTextPhone.getText().toString());
+
+            phone = new Phone();
+
+            phone.setPhoneNumber(phone_number);
+        }
+        return phone;
     }
 
     @Override
@@ -50,6 +86,7 @@ public class InsertClientFragment extends DialogFragment {
         if (getArguments() != null) {
 
         }
+        transactionRepository = new TransactionRepository(getContext());
     }
 
     @Override

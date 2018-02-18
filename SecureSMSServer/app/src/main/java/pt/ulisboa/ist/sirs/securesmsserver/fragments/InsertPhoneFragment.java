@@ -9,6 +9,8 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import pt.ulisboa.ist.sirs.securesmsserver.R;
+import pt.ulisboa.ist.sirs.securesmsserver.data.objects.main.Phone;
+import pt.ulisboa.ist.sirs.securesmsserver.data.repositories.TransactionRepository;
 
 /**
  * A simple {@link DialogFragment} subclass.
@@ -20,6 +22,8 @@ public class InsertPhoneFragment extends DialogFragment {
     private EditText editTextIBAN;
     private EditText editTextPhone;
     private Button btnInsertPhone;
+
+    private TransactionRepository transactionRepository;
 
     public InsertPhoneFragment() {
         // Required empty public constructor
@@ -40,7 +44,23 @@ public class InsertPhoneFragment extends DialogFragment {
 
     /** Called when the user taps the Insert Phone button */
     public void doInsertPhone() {
+        transactionRepository.insertPhonesByIBAN(
+                editTextIBAN.getText().toString(), getPhone());
 
+        dismiss();
+    }
+
+    private Phone getPhone() {
+        Phone phone = null;
+
+        if (editTextPhone.getText().toString().length() > 0) {
+            int phone_number = Integer.valueOf(editTextPhone.getText().toString());
+
+            phone = new Phone();
+
+            phone.setPhoneNumber(phone_number);
+        }
+        return phone;
     }
 
     @Override
@@ -49,6 +69,7 @@ public class InsertPhoneFragment extends DialogFragment {
         if (getArguments() != null) {
 
         }
+        transactionRepository = new TransactionRepository(getContext());
     }
 
     @Override
