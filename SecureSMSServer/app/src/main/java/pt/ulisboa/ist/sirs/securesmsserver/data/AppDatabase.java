@@ -14,6 +14,7 @@ import pt.ulisboa.ist.sirs.securesmsserver.data.daos.main.ClientDao;
 import pt.ulisboa.ist.sirs.securesmsserver.data.daos.main.JoinQueryDao;
 import pt.ulisboa.ist.sirs.securesmsserver.data.daos.main.MovementDao;
 import pt.ulisboa.ist.sirs.securesmsserver.data.daos.main.PhoneDao;
+import pt.ulisboa.ist.sirs.securesmsserver.data.daos.main.TransactionDao;
 import pt.ulisboa.ist.sirs.securesmsserver.data.objects.main.Client;
 import pt.ulisboa.ist.sirs.securesmsserver.data.objects.main.Movement;
 import pt.ulisboa.ist.sirs.securesmsserver.data.objects.main.Phone;
@@ -42,6 +43,8 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract JoinQueryDao joinQueryDao();
     // LiveJoinQueryDao is a class annotated with @Dao.
     public abstract LiveJoinQueryDao liveJoinQueryDao();
+    // TransactionDao is a class annotated with @Dao.
+    public abstract TransactionDao transactionDao();
 
     public static AppDatabase getAppDatabase(Context context) {
         if (INSTANCE == null) {
