@@ -15,4 +15,8 @@
     <string name="insert_client">Add Client</string>
     <string name="insert_phone">Add Phone</string>
 
+    <!-- Fragments Search EditTexts hint strings -->
+    <string name="client_search_hint">ex: PT50 0002 0123 1234 5678 9015 4</string>
+    <string name="phone_search_hint">ex: 911234567</string>
+
 </resources>

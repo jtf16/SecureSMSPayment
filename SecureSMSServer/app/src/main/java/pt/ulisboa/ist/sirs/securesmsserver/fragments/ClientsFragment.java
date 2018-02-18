@@ -15,15 +15,18 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
+import android.widget.EditText;
 
 import java.util.List;
 
 import pt.ulisboa.ist.sirs.securesmsserver.R;
-import pt.ulisboa.ist.sirs.securesmsserver.data.loaders.live.LiveClientsLoader;
+import pt.ulisboa.ist.sirs.securesmsserver.data.loaders.live.LiveClientsByPartIBANLoader;
 import pt.ulisboa.ist.sirs.securesmsserver.data.objects.main.Client;
 import pt.ulisboa.ist.sirs.securesmsserver.recyclerviews.adapters.ClientAdapter;
 
@@ -43,6 +46,8 @@ public class ClientsFragment extends Fragment
     private LinearLayoutManager mLayoutManager;
 
     private FloatingActionButton fab_add_client;
+
+    private EditText editTextSearch;
 
     private OnClientsFragmentInteractionListener mListener;
 
@@ -80,6 +85,8 @@ public class ClientsFragment extends Fragment
 
         setRecyclerView(rootView);
 
+        setEditTextSearch(rootView);
+
         setFab(rootView);
 
         // Prepare the loader.  Either reconnect with an existing one,
@@ -111,6 +118,11 @@ public class ClientsFragment extends Fragment
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    private void setEditTextSearch(View view) {
+        editTextSearch = (EditText) view.findViewById(R.id.iban_search);
+        editTextSearch.addTextChangedListener(new SearchTextWatcher(this));
     }
 
     private void setFab(View view) {
@@ -146,7 +158,8 @@ public class ClientsFragment extends Fragment
      */
     @Override
     public Loader<LiveData<List<Client>>> onCreateLoader(int id, Bundle args) {
-        return new LiveClientsLoader(getActivity());
+        return new LiveClientsByPartIBANLoader(
+                getActivity(), editTextSearch.getText().toString());
     }
 
     /**
@@ -224,5 +237,29 @@ public class ClientsFragment extends Fragment
     public interface OnClientsFragmentInteractionListener {
         // TODO: Update argument type and name
         void onClientsFragmentInteraction(Uri uri);
+    }
+
+    private class SearchTextWatcher implements TextWatcher {
+
+        private ClientsFragment clientsFragment;
+
+        public SearchTextWatcher(ClientsFragment clientsFragment) {
+            this.clientsFragment = clientsFragment;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+            getLoaderManager().restartLoader(0, null, clientsFragment);
+        }
     }
 }

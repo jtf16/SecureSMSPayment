@@ -15,16 +15,18 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
+import android.widget.EditText;
 
 import java.util.List;
 
 import pt.ulisboa.ist.sirs.securesmsserver.R;
-import pt.ulisboa.ist.sirs.securesmsserver.data.loaders.live.LivePhonesLoader;
-import pt.ulisboa.ist.sirs.securesmsserver.data.loaders.main.PhonesLoader;
+import pt.ulisboa.ist.sirs.securesmsserver.data.loaders.live.LivePhonesByPartPhoneLoader;
 import pt.ulisboa.ist.sirs.securesmsserver.data.objects.main.Phone;
 import pt.ulisboa.ist.sirs.securesmsserver.recyclerviews.adapters.PhoneAdapter;
 
@@ -44,6 +46,8 @@ public class PhonesFragment extends Fragment
     private LinearLayoutManager mLayoutManager;
 
     private FloatingActionButton fab_add_phone;
+
+    private EditText editTextSearch;
 
     private OnPhonesFragmentInteractionListener mListener;
 
@@ -81,6 +85,8 @@ public class PhonesFragment extends Fragment
 
         setRecyclerView(rootView);
 
+        setEditTextSearch(rootView);
+
         setFab(rootView);
 
         // Prepare the loader.  Either reconnect with an existing one,
@@ -112,6 +118,11 @@ public class PhonesFragment extends Fragment
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    private void setEditTextSearch(View view) {
+        editTextSearch = (EditText) view.findViewById(R.id.phone_search);
+        editTextSearch.addTextChangedListener(new SearchTextWatcher(this));
     }
 
     private void setFab(View view) {
@@ -147,7 +158,8 @@ public class PhonesFragment extends Fragment
      */
     @Override
     public Loader<LiveData<List<Phone>>> onCreateLoader(int id, Bundle args) {
-        return new LivePhonesLoader(getActivity());
+        return new LivePhonesByPartPhoneLoader(
+                getActivity(), editTextSearch.getText().toString());
     }
 
     /**
@@ -225,5 +237,29 @@ public class PhonesFragment extends Fragment
     public interface OnPhonesFragmentInteractionListener {
         // TODO: Update argument type and name
         void onPhonesFragmentInteraction(Uri uri);
+    }
+
+    private class SearchTextWatcher implements TextWatcher {
+
+        private PhonesFragment phonesFragment;
+
+        public SearchTextWatcher(PhonesFragment phonesFragment) {
+            this.phonesFragment = phonesFragment;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+            getLoaderManager().restartLoader(0, null, phonesFragment);
+        }
     }
 }
