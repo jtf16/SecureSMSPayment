@@ -2,11 +2,16 @@ package pt.ulisboa.ist.sirs.securesmsserver.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import pt.ulisboa.ist.sirs.securesmsserver.R;
 import pt.ulisboa.ist.sirs.securesmsserver.data.objects.main.Client;
@@ -121,6 +126,7 @@ public class InsertClientFragment extends DialogFragment {
 
     private void setEditTextBalance(View view) {
         editTextBalance = (EditText) view.findViewById(R.id.client_balance);
+        editTextBalance.addTextChangedListener(new BalanceTextWatcher());
     }
 
     private void setEditTextIBAN(View view) {
@@ -129,5 +135,50 @@ public class InsertClientFragment extends DialogFragment {
 
     private void setEditTextPhone(View view) {
         editTextPhone = (EditText) view.findViewById(R.id.client_phoneNumber);
+    }
+
+    private class BalanceTextWatcher implements TextWatcher {
+
+        private static final int DIGITS_AFTER_ZERO = 2;
+        private String mPreviousValue = "";
+        private int mCursorPosition;
+        private boolean mRestoringPreviousValueFlag = false;
+        private Pattern patternWithDot = Pattern.compile(
+                "[0-9]*((\\.[0-9]{0," + DIGITS_AFTER_ZERO + "})?)||(\\.)?");
+
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            if (!mRestoringPreviousValueFlag) {
+                mPreviousValue = charSequence.toString();
+                mCursorPosition = editTextBalance.getSelectionStart();
+            }
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+            if (!mRestoringPreviousValueFlag) {
+                if (!isValid(editable.toString())) {
+                    mRestoringPreviousValueFlag = true;
+                    restorePreviousValue();
+                }
+            } else {
+                mRestoringPreviousValueFlag = false;
+            }
+        }
+
+        private void restorePreviousValue() {
+            editTextBalance.setText(mPreviousValue);
+            editTextBalance.setSelection(mCursorPosition);
+        }
+
+        private boolean isValid(String s) {
+            Matcher matcherDot = patternWithDot.matcher(s);
+            return matcherDot.matches();
+        }
     }
 }
