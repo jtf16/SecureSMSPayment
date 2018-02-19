@@ -6,6 +6,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 
+import pt.ulisboa.ist.sirs.securesmsserver.data.DatabaseCreator;
 import pt.ulisboa.ist.sirs.securesmsserver.fragments.ClientsFragment;
 import pt.ulisboa.ist.sirs.securesmsserver.fragments.MovementsFragment;
 import pt.ulisboa.ist.sirs.securesmsserver.fragments.PhonesFragment;
@@ -18,6 +19,9 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        DatabaseCreator databaseCreator =
+                new DatabaseCreator(getApplicationContext(), 3);
 
         // Set the content of the activity to use the activity_main.xml layout file
         setContentView(R.layout.activity_main);
