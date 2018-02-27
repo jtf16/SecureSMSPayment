@@ -11,6 +11,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import org.iban4j.IbanFormat;
+import org.iban4j.IbanFormatException;
+import org.iban4j.IbanUtil;
+import org.iban4j.InvalidCheckDigitException;
+import org.iban4j.UnsupportedCountryException;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,6 +34,8 @@ public class InsertPhoneFragment extends DialogFragment {
     private EditText editTextIBAN;
     private EditText editTextPhone;
     private Button btnInsertPhone;
+
+    private boolean validIBAN = false;
 
     private TransactionRepository transactionRepository;
 
@@ -52,10 +60,13 @@ public class InsertPhoneFragment extends DialogFragment {
      * Called when the user taps the Insert Phone button
      */
     public void doInsertPhone() {
-        transactionRepository.insertPhonesByIBAN(
-                editTextIBAN.getText().toString(), getPhone());
 
-        dismiss();
+        if (validIBAN && editTextPhone.length() > 0) {
+            transactionRepository.insertPhonesByIBAN(
+                    editTextIBAN.getText().toString(), getPhone());
+
+            dismiss();
+        }
     }
 
     private Phone getPhone() {
@@ -119,6 +130,10 @@ public class InsertPhoneFragment extends DialogFragment {
         editTextPhone = (EditText) view.findViewById(R.id.client_phoneNumber);
     }
 
+    public void setValidIBAN(boolean newValidIBAN) {
+        validIBAN = newValidIBAN;
+    }
+
     private class IBANTextWatcher implements TextWatcher {
 
         // means divider position is every 5th symbol
@@ -175,6 +190,22 @@ public class InsertPhoneFragment extends DialogFragment {
                 s.replace(0, s.length(), buildCorrectInput(newString));
 
                 editTextIBAN.setSelection(cursor);
+            }
+
+            if (s.length() > 0) {
+                // IBAN validation
+                try {
+                    IbanUtil.validate(s.toString(), IbanFormat.Default);
+                    // valid IBAN
+                    setValidIBAN(true);
+                } catch (IbanFormatException |
+                        InvalidCheckDigitException |
+                        UnsupportedCountryException e) {
+                    // invalid
+                    setValidIBAN(false);
+                    // error message displayed to user
+                    editTextIBAN.setError("Invalid IBAN");
+                }
             }
         }
 

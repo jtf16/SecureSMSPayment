@@ -11,6 +11,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import org.iban4j.IbanFormat;
+import org.iban4j.IbanFormatException;
+import org.iban4j.IbanUtil;
+import org.iban4j.InvalidCheckDigitException;
+import org.iban4j.UnsupportedCountryException;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,6 +36,8 @@ public class InsertClientFragment extends DialogFragment {
     private EditText editTextBalance;
     private EditText editTextPhone;
     private Button btnInsertClient;
+
+    private boolean validIBAN = false;
 
     private TransactionRepository transactionRepository;
 
@@ -54,18 +62,28 @@ public class InsertClientFragment extends DialogFragment {
      * Called when the user taps the Insert Client button
      */
     public void doInsertClient() {
-        transactionRepository.insertClientAndPhones(getClient(), getPhone());
 
-        dismiss();
+        if (validIBAN) {
+            transactionRepository.insertClientAndPhones(getClient(), getPhone());
+
+            dismiss();
+        }
     }
 
     private Client getClient() {
         Client client = null;
 
-        if (editTextIBAN.getText().toString().length() > 0 &&
-                editTextBalance.getText().toString().length() > 0) {
+        if (editTextIBAN.getText().toString().length() > 0) {
             String iban = editTextIBAN.getText().toString();
-            float balance = Float.valueOf(editTextBalance.getText().toString());
+            float balance;
+
+            if (editTextBalance.getText().toString().equals(".") ||
+                    editTextBalance.getText().toString().equals("")) {
+                balance = 0;
+            }
+            else {
+                balance = Float.valueOf(editTextBalance.getText().toString());
+            }
 
             client = new Client();
 
@@ -143,6 +161,10 @@ public class InsertClientFragment extends DialogFragment {
         editTextPhone = (EditText) view.findViewById(R.id.client_phoneNumber);
     }
 
+    public void setValidIBAN(boolean newValidIBAN) {
+        validIBAN = newValidIBAN;
+    }
+
     private class BalanceTextWatcher implements TextWatcher {
 
         private static final int DIGITS_AFTER_ZERO = 2;
@@ -150,7 +172,7 @@ public class InsertClientFragment extends DialogFragment {
         private int mCursorPosition;
         private boolean mRestoringPreviousValueFlag = false;
         private Pattern patternWithDot = Pattern.compile(
-                "[0-9]*((\\.[0-9]{0," + DIGITS_AFTER_ZERO + "})?)||(\\.)?");
+                "\\d*((\\.\\d{0," + DIGITS_AFTER_ZERO + "})?)||(\\.)?");
 
         @Override
         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -244,6 +266,22 @@ public class InsertClientFragment extends DialogFragment {
                 s.replace(0, s.length(), buildCorrectInput(newString));
 
                 editTextIBAN.setSelection(cursor);
+            }
+
+            if (s.length() > 0) {
+                // IBAN validation
+                try {
+                    IbanUtil.validate(s.toString(), IbanFormat.Default);
+                    // valid IBAN
+                    setValidIBAN(true);
+                } catch (IbanFormatException |
+                        InvalidCheckDigitException |
+                        UnsupportedCountryException e) {
+                    // invalid
+                    setValidIBAN(false);
+                    // error message displayed to user
+                    editTextIBAN.setError("Invalid IBAN");
+                }
             }
         }
 
