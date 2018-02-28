@@ -47,7 +47,7 @@ public class MovementViewHolder extends RecyclerView.ViewHolder {
             fromOrTo.setText(R.string.to);
         }
         iban.setText(movement.getIBAN());
-        amount.setText(movement.getAmount()+"€");
+        amount.setText(movement.getAmount() + "€");
         Date realDate = movement.getDate();
         date.setText(DateFormat.getDateInstance(DateFormat.SHORT).format(realDate));
         time.setText(DateFormat.getTimeInstance().format(realDate));

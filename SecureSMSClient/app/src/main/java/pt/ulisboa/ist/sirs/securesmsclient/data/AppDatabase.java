@@ -21,6 +21,7 @@ public abstract class AppDatabase extends RoomDatabase {
 
     // ClientDao is a class annotated with @Dao.
     public abstract ClientDao clientDao();
+
     // MovementDao is a class annotated with @Dao.
     public abstract MovementDao movementDao();
 
