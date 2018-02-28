@@ -3,6 +3,7 @@ package pt.ulisboa.ist.sirs.securesmsclient.data.daos;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
+import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Transaction;
 import android.arch.persistence.room.Update;
@@ -12,7 +13,7 @@ import pt.ulisboa.ist.sirs.securesmsclient.data.objects.Client;
 @Dao
 public abstract class ClientDao {
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     public abstract void insertClients(Client... clients);
 
     @Update

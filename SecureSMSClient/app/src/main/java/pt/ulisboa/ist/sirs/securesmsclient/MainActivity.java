@@ -1,24 +1,58 @@
 package pt.ulisboa.ist.sirs.securesmsclient;
 
+import android.content.Context;
+import android.content.CursorLoader;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.widget.CursorAdapter;
+import android.widget.TextView;
 
+import java.util.Calendar;
+import java.util.List;
+
+import pt.ulisboa.ist.sirs.securesmsclient.data.loaders.ClientLoader;
+import pt.ulisboa.ist.sirs.securesmsclient.data.loaders.MovementsLoader;
+import pt.ulisboa.ist.sirs.securesmsclient.data.objects.Client;
+import pt.ulisboa.ist.sirs.securesmsclient.data.objects.Movement;
+import pt.ulisboa.ist.sirs.securesmsclient.data.repositories.ClientRepository;
+import pt.ulisboa.ist.sirs.securesmsclient.data.repositories.MovementRepository;
 import pt.ulisboa.ist.sirs.securesmsclient.recyclerviews.adapters.MovementAdapter;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+        implements LoaderManager.LoaderCallbacks{
+
+    private TextView balanceTextView;
 
     private RecyclerView mRecyclerView;
     private MovementAdapter movementAdapter;
     private LinearLayoutManager mLayoutManager;
+
+    private static final int MOVEMENTS_LOADER_ID = 0;
+    private static final int CLIENT_LOADER_ID = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        setBalanceTexView();
         setRecyclerView();
+
+        // Prepare the loaders.  Either re-connect with an existing one,
+        // or start a new one.
+        getSupportLoaderManager().restartLoader(MOVEMENTS_LOADER_ID, null, this);
+        getSupportLoaderManager().restartLoader(CLIENT_LOADER_ID, null, this);
+    }
+
+    private void setBalanceTexView() {
+        balanceTextView = (TextView) findViewById(R.id.balance);
     }
 
     private void setRecyclerView() {
@@ -31,5 +65,95 @@ public class MainActivity extends AppCompatActivity {
         // specify an adapter (see also next example)
         movementAdapter = new MovementAdapter(mLayoutManager);
         mRecyclerView.setAdapter(movementAdapter);
+    }
+
+    /**
+     * Instantiate and return a new Loader for the given ID.
+     *
+     * @param id   The ID whose loader is to be created.
+     * @param args Any arguments supplied by the caller.
+     * @return Return a new Loader instance that is ready to start loading.
+     */
+    @Override
+    public Loader onCreateLoader(int id, Bundle args) {
+        switch (id) {
+            case MOVEMENTS_LOADER_ID:
+                return new MovementsLoader(this);
+            case CLIENT_LOADER_ID:
+                return new ClientLoader(this, 0);
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Called when a previously created loader has finished its load.  Note
+     * that normally an application is <em>not</em> allowed to commit fragment
+     * transactions while in this call, since it can happen after an
+     * activity's state is saved.  See {@link FragmentManager#beginTransaction()
+     * FragmentManager.openTransaction()} for further discussion on this.
+     * <p>
+     * <p>This function is guaranteed to be called prior to the release of
+     * the last data that was supplied for this Loader.  At this point
+     * you should remove all use of the old data (since it will be released
+     * soon), but should not do your own release of the data since its Loader
+     * owns it and will take care of that.  The Loader will take care of
+     * management of its data so you don't have to.  In particular:
+     * <p>
+     * <ul>
+     * <li> <p>The Loader will monitor for changes to the data, and report
+     * them to you through new calls here.  You should not monitor the
+     * data yourself.  For example, if the data is a {@link Cursor}
+     * and you place it in a {@link CursorAdapter}, use
+     * the {@link CursorAdapter#CursorAdapter(Context, * Cursor, int)} constructor <em>without</em> passing
+     * in either {@link CursorAdapter#FLAG_AUTO_REQUERY}
+     * or {@link CursorAdapter#FLAG_REGISTER_CONTENT_OBSERVER}
+     * (that is, use 0 for the flags argument).  This prevents the CursorAdapter
+     * from doing its own observing of the Cursor, which is not needed since
+     * when a change happens you will get a new Cursor throw another call
+     * here.
+     * <li> The Loader will release the data once it knows the application
+     * is no longer using it.  For example, if the data is
+     * a {@link Cursor} from a {@link CursorLoader},
+     * you should not call close() on it yourself.  If the Cursor is being placed in a
+     * {@link CursorAdapter}, you should use the
+     * {@link CursorAdapter#swapCursor(Cursor)}
+     * method so that the old Cursor is not closed.
+     * </ul>
+     *
+     * @param loader The Loader that has finished.
+     * @param data   The data generated by the Loader.
+     */
+    @Override
+    public void onLoadFinished(Loader loader, Object data) {
+        switch (loader.getId()) {
+
+            case MOVEMENTS_LOADER_ID:
+                movementAdapter.setMovements((List<Movement>) data);
+                break;
+            case CLIENT_LOADER_ID:
+                if (data != null) {
+                    Client client = (Client) data;
+                    balanceTextView.setText(String.valueOf(client.getBalance()));
+                }
+        }
+    }
+
+    /**
+     * Called when a previously created loader is being reset, and thus
+     * making its data unavailable.  The application should at this point
+     * remove any references it has to the Loader's data.
+     *
+     * @param loader The Loader that is being reset.
+     */
+    @Override
+    public void onLoaderReset(Loader loader) {
+        switch (loader.getId()) {
+
+            case MOVEMENTS_LOADER_ID:
+                // Clear the data in the adapter.
+                movementAdapter.setMovements(null);
+                break;
+        }
     }
 }

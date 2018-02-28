@@ -13,8 +13,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:paddingBottom="16dp"
-        android:text="5000.0€"
+        android:layout_marginBottom="16dp"
+        android:text="0.0€"
         android:textSize="30sp"/>
 
     <android.support.v7.widget.RecyclerView
@@ -29,6 +29,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:onClick="goToTransfer"
+        android:layout_marginTop="16dp"
         android:drawablePadding="8dp"
         android:drawableRight="@drawable/exchange"
         android:text="@string/transfer" />

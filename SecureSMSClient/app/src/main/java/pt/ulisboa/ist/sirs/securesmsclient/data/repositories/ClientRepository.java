@@ -26,7 +26,7 @@ public class ClientRepository {
         new GetClientUpdateTask().execute(clients);
     }
 
-    public void insertAndDeleteClient(final Client oldClient, final Client newClient) {
+    public void deleteAndInsertClient(final Client oldClient, final Client newClient) {
         new GetClientDeleteAndInsertTask(oldClient, newClient).execute();
     }
 
