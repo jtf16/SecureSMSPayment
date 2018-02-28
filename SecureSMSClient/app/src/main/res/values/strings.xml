@@ -3,4 +3,8 @@
 
     <!-- MainActivity Buttons strings -->
     <string name="transfer">Transfer</string>
+
+    <!-- MovementViewHolder TextViews strings -->
+    <string name="from">From:</string>
+    <string name="to">To:</string>
 </resources>
