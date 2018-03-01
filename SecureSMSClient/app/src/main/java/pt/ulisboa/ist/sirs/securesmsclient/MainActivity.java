@@ -15,20 +15,17 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.View;
 import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import java.util.Calendar;
 import java.util.List;
 
+import pt.ulisboa.ist.sirs.securesmsclient.data.DatabaseCreator;
 import pt.ulisboa.ist.sirs.securesmsclient.data.loaders.live.LiveClientLoader;
 import pt.ulisboa.ist.sirs.securesmsclient.data.loaders.live.LiveMovementsByPartIBANLoader;
-import pt.ulisboa.ist.sirs.securesmsclient.data.loaders.live.LiveMovementsLoader;
 import pt.ulisboa.ist.sirs.securesmsclient.data.objects.Client;
 import pt.ulisboa.ist.sirs.securesmsclient.data.objects.Movement;
-import pt.ulisboa.ist.sirs.securesmsclient.data.repositories.MovementRepository;
 import pt.ulisboa.ist.sirs.securesmsclient.recyclerviews.adapters.MovementAdapter;
 
 public class MainActivity extends AppCompatActivity
@@ -50,14 +47,8 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Movement movement = new Movement();
-        movement.setIBAN("PT50 0002 0123 1234 5678 9015 4");
-        movement.setDate(Calendar.getInstance().getTime());
-        movement.setFromOrTo(0);
-        movement.setAmount(500);
-        movement.setState("Processed");
-        MovementRepository movementRepository = new MovementRepository(this);
-        movementRepository.insertMovement(movement);
+        DatabaseCreator databaseCreator =
+                new DatabaseCreator(getApplicationContext(), 3);
 
         setBalanceTexView();
         setEditTextSearch();
