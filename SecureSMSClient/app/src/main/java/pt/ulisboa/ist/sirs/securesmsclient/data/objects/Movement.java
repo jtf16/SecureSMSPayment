@@ -4,7 +4,11 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Entity(tableName = "Movement")
 public class Movement {
@@ -48,8 +52,12 @@ public class Movement {
         return IBAN;
     }
 
+    public String getIBANWithSpaces() {
+        return insertSpaceIntoIBAN(IBAN, " ", 4);
+    }
+
     public void setIBAN(String IBAN) {
-        this.IBAN = IBAN;
+        this.IBAN = StringUtils.deleteWhitespace(IBAN);
     }
 
     public float getAmount() {
@@ -74,5 +82,11 @@ public class Movement {
 
     public void setState(String state) {
         this.state = state;
+    }
+
+    private String insertSpaceIntoIBAN(String text, String insert, int period) {
+        Pattern p = Pattern.compile("(.{" + period + "})", Pattern.DOTALL);
+        Matcher m = p.matcher(text);
+        return m.replaceAll("$1" + insert);
     }
 }

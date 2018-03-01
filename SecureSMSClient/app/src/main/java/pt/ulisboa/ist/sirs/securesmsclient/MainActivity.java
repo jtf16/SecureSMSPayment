@@ -13,17 +13,21 @@ import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.View;
 import android.widget.CursorAdapter;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import java.util.Calendar;
 import java.util.List;
 
 import pt.ulisboa.ist.sirs.securesmsclient.data.loaders.live.LiveClientLoader;
+import pt.ulisboa.ist.sirs.securesmsclient.data.loaders.live.LiveMovementsByPartIBANLoader;
 import pt.ulisboa.ist.sirs.securesmsclient.data.loaders.live.LiveMovementsLoader;
 import pt.ulisboa.ist.sirs.securesmsclient.data.objects.Client;
 import pt.ulisboa.ist.sirs.securesmsclient.data.objects.Movement;
-import pt.ulisboa.ist.sirs.securesmsclient.data.repositories.ClientRepository;
 import pt.ulisboa.ist.sirs.securesmsclient.data.repositories.MovementRepository;
 import pt.ulisboa.ist.sirs.securesmsclient.recyclerviews.adapters.MovementAdapter;
 
@@ -31,6 +35,8 @@ public class MainActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks {
 
     private TextView balanceTextView;
+
+    private EditText editTextSearch;
 
     private RecyclerView mRecyclerView;
     private MovementAdapter movementAdapter;
@@ -44,7 +50,17 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Movement movement = new Movement();
+        movement.setIBAN("PT50 0002 0123 1234 5678 9015 4");
+        movement.setDate(Calendar.getInstance().getTime());
+        movement.setFromOrTo(0);
+        movement.setAmount(500);
+        movement.setState("Processed");
+        MovementRepository movementRepository = new MovementRepository(this);
+        movementRepository.insertMovement(movement);
+
         setBalanceTexView();
+        setEditTextSearch();
         setRecyclerView();
 
         // Prepare the loaders.  Either re-connect with an existing one,
@@ -55,6 +71,11 @@ public class MainActivity extends AppCompatActivity
 
     private void setBalanceTexView() {
         balanceTextView = (TextView) findViewById(R.id.balance);
+    }
+
+    private void setEditTextSearch() {
+        editTextSearch = (EditText) findViewById(R.id.iban_search);
+        editTextSearch.addTextChangedListener(new SearchTextWatcher(this));
     }
 
     private void setRecyclerView() {
@@ -80,7 +101,8 @@ public class MainActivity extends AppCompatActivity
     public Loader onCreateLoader(int id, Bundle args) {
         switch (id) {
             case MOVEMENTS_LOADER_ID:
-                return new LiveMovementsLoader(this);
+                return new LiveMovementsByPartIBANLoader(
+                        this, editTextSearch.getText().toString());
             case CLIENT_LOADER_ID:
                 return new LiveClientLoader(this, 0);
             default:
@@ -169,6 +191,30 @@ public class MainActivity extends AppCompatActivity
                 // Clear the data in the adapter.
                 movementAdapter.setMovements(null);
                 break;
+        }
+    }
+
+    private class SearchTextWatcher implements TextWatcher {
+
+        private MainActivity mainActivity;
+
+        public SearchTextWatcher(MainActivity mainActivity) {
+            this.mainActivity = mainActivity;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+            getSupportLoaderManager().restartLoader(MOVEMENTS_LOADER_ID, null, mainActivity);
         }
     }
 }

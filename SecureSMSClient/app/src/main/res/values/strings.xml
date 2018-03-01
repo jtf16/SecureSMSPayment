@@ -7,4 +7,7 @@
     <!-- MovementViewHolder TextViews strings -->
     <string name="from">From:</string>
     <string name="to">To:</string>
+
+    <!-- Fragments Search EditTexts hint strings -->
+    <string name="client_search_hint">ex: PT50 0002 0123 1234 5678 9015 4</string>
 </resources>
