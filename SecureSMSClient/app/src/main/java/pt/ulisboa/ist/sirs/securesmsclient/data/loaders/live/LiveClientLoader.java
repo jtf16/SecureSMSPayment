@@ -1,5 +1,6 @@
-package pt.ulisboa.ist.sirs.securesmsclient.data.loaders;
+package pt.ulisboa.ist.sirs.securesmsclient.data.loaders.live;
 
+import android.arch.lifecycle.LiveData;
 import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -9,17 +10,17 @@ import pt.ulisboa.ist.sirs.securesmsclient.InterestingConfigChanges;
 import pt.ulisboa.ist.sirs.securesmsclient.data.AppDatabase;
 import pt.ulisboa.ist.sirs.securesmsclient.data.objects.Client;
 
-public class ClientLoader extends
-        AsyncTaskLoader<Client> {
+public class LiveClientLoader extends
+        AsyncTaskLoader<LiveData<Client>> {
 
-    private Client mData;
+    private LiveData<Client> mData;
     private int id;
 
     final InterestingConfigChanges mLastConfig = new InterestingConfigChanges();
 
     private AppDatabase appDatabase;
 
-    public ClientLoader(Context context, int id) {
+    public LiveClientLoader(Context context, int id) {
         super(context);
         this.id = id;
         appDatabase = AppDatabase.getAppDatabase(context);
@@ -51,9 +52,9 @@ public class ClientLoader extends
      * @see #onCanceled
      */
     @Override
-    public Client loadInBackground() {
+    public LiveData<Client> loadInBackground() {
         // Retrieve the client.
-        return appDatabase.clientDao().loadClientById(id);
+        return appDatabase.liveClientDao().loadClientById(id);
     }
 
     /**
@@ -62,7 +63,7 @@ public class ClientLoader extends
      * here just adds a little more logic.
      */
     @Override
-    public void deliverResult(Client data) {
+    public void deliverResult(LiveData<Client> data) {
         if (isReset()) {
             // An async query came in while the loader is stopped.  We
             // don't need the result.
@@ -70,7 +71,7 @@ public class ClientLoader extends
                 onReleaseResources(data);
             }
         }
-        Client oldData = mData;
+        LiveData<Client> oldData = mData;
         mData = data;
 
         if (isStarted()) {
@@ -122,7 +123,7 @@ public class ClientLoader extends
      * Handles a request to cancel a load.
      */
     @Override
-    public void onCanceled(Client data) {
+    public void onCanceled(LiveData<Client> data) {
         super.onCanceled(data);
 
         // At this point we can release the resources associated with 'data'
@@ -152,9 +153,10 @@ public class ClientLoader extends
      * Helper function to take care of releasing resources associated
      * with an actively loaded data set.
      */
-    protected void onReleaseResources(Client data) {
+    protected void onReleaseResources(LiveData<Client> data) {
         // For a simple List<> there is nothing to do.  For something
         // like a Cursor, we would close it here.
     }
 }
+
 

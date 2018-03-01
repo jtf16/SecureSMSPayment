@@ -1,24 +1,26 @@
 package pt.ulisboa.ist.sirs.securesmsclient;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
 
 import java.util.Calendar;
 import java.util.List;
 
-import pt.ulisboa.ist.sirs.securesmsclient.data.loaders.ClientLoader;
-import pt.ulisboa.ist.sirs.securesmsclient.data.loaders.MovementsLoader;
+import pt.ulisboa.ist.sirs.securesmsclient.data.loaders.live.LiveClientLoader;
+import pt.ulisboa.ist.sirs.securesmsclient.data.loaders.live.LiveMovementsLoader;
 import pt.ulisboa.ist.sirs.securesmsclient.data.objects.Client;
 import pt.ulisboa.ist.sirs.securesmsclient.data.objects.Movement;
 import pt.ulisboa.ist.sirs.securesmsclient.data.repositories.ClientRepository;
@@ -26,7 +28,7 @@ import pt.ulisboa.ist.sirs.securesmsclient.data.repositories.MovementRepository;
 import pt.ulisboa.ist.sirs.securesmsclient.recyclerviews.adapters.MovementAdapter;
 
 public class MainActivity extends AppCompatActivity
-        implements LoaderManager.LoaderCallbacks{
+        implements LoaderManager.LoaderCallbacks {
 
     private TextView balanceTextView;
 
@@ -78,9 +80,9 @@ public class MainActivity extends AppCompatActivity
     public Loader onCreateLoader(int id, Bundle args) {
         switch (id) {
             case MOVEMENTS_LOADER_ID:
-                return new MovementsLoader(this);
+                return new LiveMovementsLoader(this);
             case CLIENT_LOADER_ID:
-                return new ClientLoader(this, 0);
+                return new LiveClientLoader(this, 0);
             default:
                 return null;
         }
@@ -129,13 +131,26 @@ public class MainActivity extends AppCompatActivity
         switch (loader.getId()) {
 
             case MOVEMENTS_LOADER_ID:
-                movementAdapter.setMovements((List<Movement>) data);
+                LiveData<List<Movement>> liveDataMovements = (LiveData<List<Movement>>) data;
+                liveDataMovements.observe(this, new Observer<List<Movement>>() {
+                    @Override
+                    public void onChanged(@Nullable List<Movement> newMovements) {
+                        movementAdapter.setMovements(newMovements);
+                    }
+                });
                 break;
             case CLIENT_LOADER_ID:
-                if (data != null) {
-                    Client client = (Client) data;
-                    balanceTextView.setText(String.valueOf(client.getBalance()));
-                }
+                LiveData<Client> liveDataClient = (LiveData<Client>) data;
+                liveDataClient.observe(this, new Observer<Client>() {
+                    @Override
+                    public void onChanged(@Nullable Client newClient) {
+                        if (newClient != null) {
+                            balanceTextView.setText(String.valueOf(newClient.getBalance()) + "€");
+                        } else {
+                            balanceTextView.setText("0.0€");
+                        }
+                    }
+                });
         }
     }
 

@@ -1,4 +1,4 @@
-package pt.ulisboa.ist.sirs.securesmsclient.data.daos;
+package pt.ulisboa.ist.sirs.securesmsclient.data.daos.main;
 
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;

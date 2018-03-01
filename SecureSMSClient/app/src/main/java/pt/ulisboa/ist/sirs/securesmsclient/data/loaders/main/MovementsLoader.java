@@ -1,4 +1,4 @@
-package pt.ulisboa.ist.sirs.securesmsclient.data.loaders;
+package pt.ulisboa.ist.sirs.securesmsclient.data.loaders.main;
 
 import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
