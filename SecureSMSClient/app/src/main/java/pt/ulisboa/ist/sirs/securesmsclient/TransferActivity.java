@@ -1,13 +1,19 @@
 package pt.ulisboa.ist.sirs.securesmsclient;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.DigitsKeyListener;
 import android.view.View;
 import android.widget.EditText;
+
+import org.iban4j.IbanFormat;
+import org.iban4j.IbanFormatException;
+import org.iban4j.IbanUtil;
+import org.iban4j.InvalidCheckDigitException;
+import org.iban4j.UnsupportedCountryException;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,6 +22,9 @@ public class TransferActivity extends AppCompatActivity {
 
     private EditText editTextIBAN;
     private EditText editTextAmount;
+
+    private static boolean validIBAN = false;
+    private static boolean validAmount = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,9 +47,21 @@ public class TransferActivity extends AppCompatActivity {
         editTextAmount.addTextChangedListener(new AmountTextWatcher());
     }
 
+    public static void setValidIBAN(boolean newValidIBAN) {
+        validIBAN = newValidIBAN;
+    }
+
+    public static void setValidAmount(boolean newValidAmount) {
+        validAmount = newValidAmount;
+    }
+
     public void doTransfer(View view) {
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
+
+        if (validIBAN && validAmount) {
+
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+        }
     }
 
     private class AmountTextWatcher implements TextWatcher {
@@ -75,6 +96,17 @@ public class TransferActivity extends AppCompatActivity {
                 }
             } else {
                 mRestoringPreviousValueFlag = false;
+            }
+
+            if (editable.toString().equals("")) {
+                setValidAmount(false);
+            } else if (editable.toString().equals(".") ||
+                    Float.valueOf(editable.toString()) == 0) {
+                setValidAmount(false);
+                // error message displayed to user
+                editTextAmount.setError("Value must be greater than 0");
+            } else {
+                setValidAmount(true);
             }
         }
 
@@ -145,6 +177,22 @@ public class TransferActivity extends AppCompatActivity {
                 s.replace(0, s.length(), buildCorrectInput(newString));
 
                 editTextIBAN.setSelection(cursor);
+            }
+
+            if (s.length() > 0) {
+                // IBAN validation
+                try {
+                    IbanUtil.validate(s.toString(), IbanFormat.Default);
+                    // valid IBAN
+                    setValidIBAN(true);
+                } catch (IbanFormatException |
+                        InvalidCheckDigitException |
+                        UnsupportedCountryException e) {
+                    // invalid
+                    setValidIBAN(false);
+                    // error message displayed to user
+                    editTextIBAN.setError("Invalid IBAN");
+                }
             }
         }
 

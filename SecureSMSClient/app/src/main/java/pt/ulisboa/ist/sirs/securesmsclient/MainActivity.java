@@ -65,7 +65,9 @@ public class MainActivity extends AppCompatActivity
         getSupportLoaderManager().restartLoader(CLIENT_LOADER_ID, null, this);
     }
 
-    /** Called when the user taps the Transfer button */
+    /**
+     * Called when the user taps the Transfer button
+     */
     public void goToTransfer(View view) {
         Intent intent = new Intent(this, TransferActivity.class);
         startActivity(intent);
