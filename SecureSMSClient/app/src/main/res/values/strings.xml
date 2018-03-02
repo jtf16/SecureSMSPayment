@@ -10,4 +10,8 @@
 
     <!-- Fragments Search EditTexts hint strings -->
     <string name="client_search_hint">ex: PT50 0002 0123 1234 5678 9015 4</string>
+
+    <!-- TransferActivity EditText strings -->
+    <string name="amount">Amount</string>
+    <string name="IBAN">Write destination IBAN</string>
 </resources>

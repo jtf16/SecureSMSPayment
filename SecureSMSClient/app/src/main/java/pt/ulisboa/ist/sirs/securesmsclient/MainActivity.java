@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -15,6 +16,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.View;
 import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -58,6 +60,12 @@ public class MainActivity extends AppCompatActivity
         // or start a new one.
         getSupportLoaderManager().restartLoader(MOVEMENTS_LOADER_ID, null, this);
         getSupportLoaderManager().restartLoader(CLIENT_LOADER_ID, null, this);
+    }
+
+    /** Called when the user taps the Transfer button */
+    public void goToTransfer(View view) {
+        Intent intent = new Intent(this, TransferActivity.class);
+        startActivity(intent);
     }
 
     private void setBalanceTexView() {

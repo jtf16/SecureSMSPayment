@@ -75,7 +75,7 @@ public class DatabaseCreator {
             long rand = Math.abs(random.nextLong() % (millisecondsYear));
 
             tempMovement = new Movement();
-            tempMovement.setFromOrTo(random.nextInt(1));
+            tempMovement.setFromOrTo(random.nextInt(2));
             tempMovement.setIBAN(ibans[random.nextInt(ibansRange)]);
             tempMovement.setAmount(100 * random.nextInt(50));
             tempMovement.setDate(new Date(start + rand));
