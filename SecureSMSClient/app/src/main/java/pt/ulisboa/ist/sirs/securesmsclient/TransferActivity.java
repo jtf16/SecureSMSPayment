@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.text.method.DigitsKeyListener;
 import android.view.View;
 import android.widget.EditText;
 
@@ -27,6 +28,9 @@ public class TransferActivity extends AppCompatActivity {
 
     private void setEditTextIBAN() {
         editTextIBAN = (EditText) findViewById(R.id.iban);
+        editTextIBAN.setKeyListener(
+                DigitsKeyListener.getInstance("ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890 "));
+        editTextIBAN.addTextChangedListener(new IBANTextWatcher());
     }
 
     private void setEditTextAmount() {
@@ -82,6 +86,99 @@ public class TransferActivity extends AppCompatActivity {
         private boolean isValid(String s) {
             Matcher matcherDot = patternWithDot.matcher(s);
             return matcherDot.matches();
+        }
+    }
+
+    private class IBANTextWatcher implements TextWatcher {
+
+        // means divider position is every 5th symbol
+        private static final int DIVIDER_MODULO = 5;
+        private static final int GROUP_SIZE = DIVIDER_MODULO - 1;
+        private static final char DIVIDER = ' ';
+        private static final String STRING_DIVIDER = " ";
+        private String previousText = "";
+
+        private int deleteLength;
+        private int insertLength;
+        private int start;
+
+        private String regexIBAN = "(\\w{" + GROUP_SIZE + "}" + DIVIDER +
+                ")*\\w{1," + GROUP_SIZE + "}";
+        private Pattern patternIBAN = Pattern.compile(regexIBAN);
+
+        @Override
+        public void beforeTextChanged(final CharSequence s, final int start, final int count, final int after) {
+            this.previousText = s.toString();
+            this.deleteLength = count;
+            this.insertLength = after;
+            this.start = start;
+        }
+
+        @Override
+        public void onTextChanged(final CharSequence s, final int start, final int before, final int count) {
+
+        }
+
+        @Override
+        public void afterTextChanged(final Editable s) {
+            String originalString = s.toString();
+
+            if (!previousText.equals(originalString) &&
+                    !isInputCorrect(originalString)) {
+                String newString = previousText.substring(0, start);
+                int cursor = start;
+
+                if (deleteLength > 0 && s.length() > 0 &&
+                        (previousText.charAt(start) == DIVIDER ||
+                                start == s.length())) {
+                    newString = previousText.substring(0, start - 1);
+                    --cursor;
+                }
+
+                if (insertLength > 0) {
+                    newString += originalString.substring(start, start + insertLength);
+                    newString = buildCorrectInput(newString);
+                    cursor = newString.length();
+                }
+
+                newString += previousText.substring(start + deleteLength);
+                s.replace(0, s.length(), buildCorrectInput(newString));
+
+                editTextIBAN.setSelection(cursor);
+            }
+        }
+
+        /**
+         * Check if String has the white spaces in the correct positions, meaning
+         * if we have the String "123456789" and there should exist a white space
+         * every 4 characters then the correct String should be "1234 5678 9".
+         *
+         * @param s String to be evaluated
+         * @return true if string s is written correctly
+         */
+        private boolean isInputCorrect(String s) {
+            Matcher matcherDot = patternIBAN.matcher(s);
+            return matcherDot.matches();
+        }
+
+        /**
+         * Puts the white spaces in the correct positions,
+         * see the example in {@link IBANTextWatcher#isInputCorrect(String)}
+         * to understand the correct positions.
+         *
+         * @param s String to be corrected.
+         * @return String corrected.
+         */
+        private String buildCorrectInput(String s) {
+            StringBuilder sbs = new StringBuilder(
+                    s.replaceAll(STRING_DIVIDER, ""));
+
+            // Insert the divider in the correct positions
+            for (int i = GROUP_SIZE; i < sbs.length(); i += DIVIDER_MODULO) {
+                sbs.insert(i, DIVIDER);
+            }
+
+            return sbs.toString();
         }
     }
 }
