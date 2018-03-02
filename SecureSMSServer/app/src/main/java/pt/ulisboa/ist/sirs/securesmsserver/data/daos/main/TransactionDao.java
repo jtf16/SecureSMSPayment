@@ -63,7 +63,7 @@ public abstract class TransactionDao {
         // Anything inside this method runs in a single transaction.
         IBAN = StringUtils.deleteWhitespace(IBAN);
         Client client = loadClientByIBAN(IBAN);
-        if (client != null  && phones != null) {
+        if (client != null && phones != null) {
             for (Phone phone : phones) {
                 if (phone != null) {
                     phone.setClientId(client.getUid());
@@ -91,8 +91,7 @@ public abstract class TransactionDao {
                     if (clientFrom.getBalance() < movement.getAmount()) {
                         // Movement should not be processed
                         movement.setState("Not processed");
-                    }
-                    else {
+                    } else {
                         // Movement should be processed
                         // Update sender and receiver clients balance
                         clientFrom.setBalance(clientFrom.getBalance() - movement.getAmount());

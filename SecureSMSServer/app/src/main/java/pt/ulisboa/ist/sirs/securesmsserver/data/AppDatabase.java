@@ -29,20 +29,28 @@ public abstract class AppDatabase extends RoomDatabase {
 
     // ClientDao is a class annotated with @Dao.
     public abstract ClientDao clientDao();
+
     // LiveClientDao is a class annotated with @Dao.
     public abstract LiveClientDao liveClientDao();
+
     // MovementDao is a class annotated with @Dao.
     public abstract MovementDao movementDao();
+
     // LiveMovementDao is a class annotated with @Dao.
     public abstract LiveMovementDao liveMovementDao();
+
     // PhoneDao is a class annotated with @Dao.
     public abstract PhoneDao phoneDao();
+
     // LivePhoneDao is a class annotated with @Dao.
     public abstract LivePhoneDao livePhoneDao();
+
     // JoinQueryDao is a class annotated with @Dao.
     public abstract JoinQueryDao joinQueryDao();
+
     // LiveJoinQueryDao is a class annotated with @Dao.
     public abstract LiveJoinQueryDao liveJoinQueryDao();
+
     // TransactionDao is a class annotated with @Dao.
     public abstract TransactionDao transactionDao();
 

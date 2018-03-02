@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:minWidth="370dp"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <EditText
         android:id="@+id/client_iban"
@@ -16,7 +16,7 @@
         android:layout_marginBottom="4dp"
         android:singleLine="true"
         android:textSize="20sp"
-        android:hint="@string/IBAN"/>
+        android:hint="@string/IBAN" />
 
     <EditText
         android:id="@+id/client_phoneNumber"
@@ -30,7 +30,7 @@
         android:layout_marginBottom="16dp"
         android:singleLine="true"
         android:textSize="20sp"
-        android:hint="@string/phone_number"/>
+        android:hint="@string/phone_number" />
 
     <Button
         android:id="@+id/btn_insert_phone"

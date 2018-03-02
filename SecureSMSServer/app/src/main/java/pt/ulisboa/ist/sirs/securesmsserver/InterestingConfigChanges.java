@@ -15,8 +15,8 @@ public class InterestingConfigChanges {
     public boolean applyNewConfig(Resources res) {
         int configChanges = mLastConfiguration.updateFrom(res.getConfiguration());
         boolean densityChanged = mLastDensity != res.getDisplayMetrics().densityDpi;
-        if (densityChanged || (configChanges&(ActivityInfo.CONFIG_LOCALE
-                |ActivityInfo.CONFIG_UI_MODE|ActivityInfo.CONFIG_SCREEN_LAYOUT)) != 0) {
+        if (densityChanged || (configChanges & (ActivityInfo.CONFIG_LOCALE
+                | ActivityInfo.CONFIG_UI_MODE | ActivityInfo.CONFIG_SCREEN_LAYOUT)) != 0) {
             mLastDensity = res.getDisplayMetrics().densityDpi;
             return true;
         }

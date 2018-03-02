@@ -80,8 +80,7 @@ public class InsertClientFragment extends DialogFragment {
             if (editTextBalance.getText().toString().equals(".") ||
                     editTextBalance.getText().toString().equals("")) {
                 balance = 0;
-            }
-            else {
+            } else {
                 balance = Float.valueOf(editTextBalance.getText().toString());
             }
 

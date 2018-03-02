@@ -44,14 +44,14 @@ public class DatabaseCreator {
         for (int i = 0; i < numClients; i++) {
             tempClient = new Client();
             tempClient.setIBAN(ibans[random.nextInt(ibansRange)]);
-            tempClient.setBalance(100*random.nextInt(50));
+            tempClient.setBalance(100 * random.nextInt(50));
 
             Phone[] phones = new Phone[4];
             int numberOfClientPhones = random.nextInt(4);
 
             for (int j = 0; j < numberOfClientPhones; j++) {
                 tempPhone = new Phone();
-                tempPhone.setPhoneNumber(911234000+random.nextInt(999));
+                tempPhone.setPhoneNumber(911234000 + random.nextInt(999));
                 phones[j] = tempPhone;
             }
             transactionRepository.insertClientAndPhones(tempClient, phones);
