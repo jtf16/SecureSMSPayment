@@ -1,13 +1,16 @@
 package pt.ulisboa.ist.sirs.securesmsclient;
 
+import android.Manifest;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -36,6 +39,8 @@ import pt.ulisboa.ist.sirs.securesmsclient.recyclerviews.adapters.MovementAdapte
 public class MainActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks {
 
+    public static final int MY_PERMISSIONS_REQUEST_SEND_SMS = 1;
+
     private TextView balanceTextView;
 
     private EditText editTextSearch;
@@ -51,6 +56,8 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        checkForSmsPermission();
 
         DatabaseCreator databaseCreator =
                 new DatabaseCreator(getApplicationContext(), 3);
@@ -94,6 +101,49 @@ public class MainActivity extends AppCompatActivity
         // specify an adapter (see also next example)
         movementAdapter = new MovementAdapter(mLayoutManager);
         mRecyclerView.setAdapter(movementAdapter);
+    }
+
+    /**
+     * Checks whether the app has SMS permission.
+     */
+    private void checkForSmsPermission() {
+        if (ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
+            // Permission not yet granted. Use requestPermissions().
+            // MY_PERMISSIONS_REQUEST_SEND_SMS is an app-defined int constant.
+            // The callback method gets the result of the request.
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.SEND_SMS},
+                    MY_PERMISSIONS_REQUEST_SEND_SMS);
+        } else {
+            // Permission already granted.
+        }
+    }
+
+    /**
+     * Processes permission request codes.
+     *
+     * @param requestCode  The request code passed in requestPermissions()
+     * @param permissions  The requested permissions. Never null.
+     * @param grantResults The grant results for the corresponding permissions
+     *                     which is either PERMISSION_GRANTED or PERMISSION_DENIED. Never null.
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        // For the requestCode, check if permission was granted or not.
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_SEND_SMS: {
+                if (permissions[0].equalsIgnoreCase(Manifest.permission.SEND_SMS)
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission was granted.
+                } else {
+                    // Permission denied. Try later when it's needed
+                    // MY_PERMISSIONS_REQUEST_SEND_SMS is an app-defined int constant.
+                    // The callback method gets the result of the request.
+                }
+            }
+        }
     }
 
     /**

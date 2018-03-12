@@ -1,7 +1,10 @@
 package pt.ulisboa.ist.sirs.securesmsclient;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -59,8 +62,60 @@ public class TransferActivity extends AppCompatActivity {
 
         if (validIBAN && validAmount) {
 
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
+            checkForSmsPermission();
+
+            validIBAN = false;
+            validAmount = false;
+        }
+    }
+
+    public void transferAction() {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
+
+    /**
+     * Checks whether the app has SMS permission.
+     */
+    private void checkForSmsPermission() {
+        if (ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
+            // Permission not yet granted. Use requestPermissions().
+            // MY_PERMISSIONS_REQUEST_SEND_SMS is an app-defined int constant.
+            // The callback method gets the result of the request.
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.SEND_SMS},
+                    MainActivity.MY_PERMISSIONS_REQUEST_SEND_SMS);
+        } else {
+            // Permission already granted.
+            transferAction();
+        }
+    }
+
+    /**
+     * Processes permission request codes.
+     *
+     * @param requestCode  The request code passed in requestPermissions()
+     * @param permissions  The requested permissions. Never null.
+     * @param grantResults The grant results for the corresponding permissions
+     *                     which is either PERMISSION_GRANTED or PERMISSION_DENIED. Never null.
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        // For the requestCode, check if permission was granted or not.
+        switch (requestCode) {
+            case MainActivity.MY_PERMISSIONS_REQUEST_SEND_SMS: {
+                if (permissions[0].equalsIgnoreCase(Manifest.permission.SEND_SMS)
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission was granted.
+                    transferAction();
+                } else {
+                    // Permission denied. Try later when it's needed
+                    // MY_PERMISSIONS_REQUEST_SEND_SMS is an app-defined int constant.
+                    // The callback method gets the result of the request.
+                }
+            }
         }
     }
 
