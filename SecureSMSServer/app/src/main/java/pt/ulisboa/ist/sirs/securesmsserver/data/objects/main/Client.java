@@ -36,12 +36,12 @@ public class Client {
         return this.IBAN;
     }
 
-    public String getIBANWithSpaces() {
-        return insertSpaceIntoIBAN(IBAN, " ", 4);
-    }
-
     public void setIBAN(String IBAN) {
         this.IBAN = StringUtils.deleteWhitespace(IBAN);
+    }
+
+    public String getIBANWithSpaces() {
+        return insertSpaceIntoIBAN(IBAN, " ", 4);
     }
 
     public float getBalance() {

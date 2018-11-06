@@ -14,10 +14,8 @@ import pt.ulisboa.ist.sirs.securesmsserver.data.objects.main.Phone;
 public class PhonesLoader extends
         AsyncTaskLoader<List<Phone>> {
 
-    private List<Phone> mData;
-
     final InterestingConfigChanges mLastConfig = new InterestingConfigChanges();
-
+    private List<Phone> mData;
     private AppDatabase appDatabase;
 
     public PhonesLoader(Context context) {

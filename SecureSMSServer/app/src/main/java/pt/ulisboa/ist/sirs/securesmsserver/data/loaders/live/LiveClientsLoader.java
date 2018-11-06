@@ -15,10 +15,8 @@ import pt.ulisboa.ist.sirs.securesmsserver.data.objects.main.Client;
 public class LiveClientsLoader extends
         AsyncTaskLoader<LiveData<List<Client>>> {
 
-    private LiveData<List<Client>> mData;
-
     final InterestingConfigChanges mLastConfig = new InterestingConfigChanges();
-
+    private LiveData<List<Client>> mData;
     private AppDatabase appDatabase;
 
     public LiveClientsLoader(Context context) {

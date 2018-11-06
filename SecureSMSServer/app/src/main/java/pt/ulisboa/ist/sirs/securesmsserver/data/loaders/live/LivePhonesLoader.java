@@ -15,10 +15,8 @@ import pt.ulisboa.ist.sirs.securesmsserver.data.objects.main.Phone;
 public class LivePhonesLoader extends
         AsyncTaskLoader<LiveData<List<Phone>>> {
 
-    private LiveData<List<Phone>> mData;
-
     final InterestingConfigChanges mLastConfig = new InterestingConfigChanges();
-
+    private LiveData<List<Phone>> mData;
     private AppDatabase appDatabase;
 
     public LivePhonesLoader(Context context) {

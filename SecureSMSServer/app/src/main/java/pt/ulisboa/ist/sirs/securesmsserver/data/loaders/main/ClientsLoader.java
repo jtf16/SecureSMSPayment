@@ -14,10 +14,8 @@ import pt.ulisboa.ist.sirs.securesmsserver.data.objects.main.Client;
 public class ClientsLoader extends
         AsyncTaskLoader<List<Client>> {
 
-    private List<Client> mData;
-
     final InterestingConfigChanges mLastConfig = new InterestingConfigChanges();
-
+    private List<Client> mData;
     private AppDatabase appDatabase;
 
     public ClientsLoader(Context context) {

@@ -14,10 +14,8 @@ import pt.ulisboa.ist.sirs.securesmsserver.data.objects.secundary.ClientMovement
 public class ClientMovementsLoader extends
         AsyncTaskLoader<List<ClientMovement>> {
 
-    private List<ClientMovement> mData;
-
     final InterestingConfigChanges mLastConfig = new InterestingConfigChanges();
-
+    private List<ClientMovement> mData;
     private AppDatabase appDatabase;
 
     public ClientMovementsLoader(Context context) {

@@ -10,6 +10,8 @@ import android.telephony.SmsMessage;
 import android.util.Log;
 import android.widget.Toast;
 
+import pt.ulisboa.ist.sirs.securesmsserver.smsops.SMSResponse;
+
 public class SMSReceiver extends BroadcastReceiver {
 
     public static final String pdu_type = "pdus";
@@ -17,8 +19,8 @@ public class SMSReceiver extends BroadcastReceiver {
     /**
      * Called when the BroadcastReceiver is receiving an Intent broadcast.
      *
-     * @param context  The Context in which the receiver is running.
-     * @param intent   The Intent received.
+     * @param context The Context in which the receiver is running.
+     * @param intent  The Intent received.
      */
     @TargetApi(Build.VERSION_CODES.M)
     @Override
@@ -51,6 +53,7 @@ public class SMSReceiver extends BroadcastReceiver {
                 Log.d(SMSReceiver.class.getSimpleName(), "onReceive: " + strMessage);
                 Toast.makeText(context, strMessage, Toast.LENGTH_LONG).show();
             }
+            SMSResponse.sendResponse(msgs[0].getOriginatingAddress(), strMessage);
         }
     }
 }
