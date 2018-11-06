@@ -2,20 +2,20 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingBottom="16dp"
     android:paddingLeft="16dp"
     android:paddingRight="16dp"
-    android:paddingBottom="16dp"
-    android:paddingTop="16dp"
-    android:orientation="vertical" >
+    android:paddingTop="16dp">
 
     <TextView
-        android:layout_gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:text="@string/transfer"
         android:textAllCaps="true"
-        android:textSize="30sp"
-        android:textColor="@android:color/black"/>
+        android:textColor="@android:color/black"
+        android:textSize="30sp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -24,13 +24,13 @@
 
         <EditText
             android:id="@+id/iban"
-            android:layout_gravity="center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:singleLine="true"
-            android:drawableStart="@drawable/receiver"
+            android:layout_gravity="center"
             android:drawablePadding="10dp"
-            android:hint="@string/IBAN"/>
+            android:drawableStart="@drawable/receiver"
+            android:hint="@string/IBAN"
+            android:singleLine="true" />
 
     </LinearLayout>
 
@@ -41,13 +41,13 @@
 
         <EditText
             android:id="@+id/amount"
-            android:layout_gravity="center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:drawableStart="@drawable/euro"
+            android:layout_gravity="center"
             android:drawablePadding="10dp"
-            android:inputType="numberDecimal"
-            android:hint="@string/amount"/>
+            android:drawableStart="@drawable/euro"
+            android:hint="@string/amount"
+            android:inputType="numberDecimal" />
 
     </LinearLayout>
 
@@ -56,14 +56,14 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="16dp"
-        android:drawablePadding="8dp"
         android:drawableEnd="@drawable/exchange"
+        android:drawablePadding="8dp"
         android:onClick="doTransfer"
         android:text="@string/transfer" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2"/>
+        android:layout_weight="2" />
 
 </LinearLayout>

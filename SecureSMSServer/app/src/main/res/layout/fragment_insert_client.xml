@@ -7,50 +7,50 @@
 
     <EditText
         android:id="@+id/client_iban"
-        android:layout_gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="4dp"
         android:layout_marginLeft="4dp"
         android:layout_marginRight="4dp"
-        android:layout_marginBottom="4dp"
+        android:layout_marginTop="16dp"
+        android:hint="@string/IBAN"
         android:singleLine="true"
-        android:textSize="20sp"
-        android:hint="@string/IBAN" />
+        android:textSize="20sp" />
 
     <EditText
         android:id="@+id/client_balance"
-        android:layout_gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="numberDecimal"
-        android:layout_marginTop="4dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="4dp"
         android:layout_marginLeft="4dp"
         android:layout_marginRight="4dp"
-        android:layout_marginBottom="4dp"
+        android:layout_marginTop="4dp"
+        android:hint="@string/balance"
+        android:inputType="numberDecimal"
         android:singleLine="true"
-        android:textSize="20sp"
-        android:hint="@string/balance" />
+        android:textSize="20sp" />
 
     <EditText
         android:id="@+id/client_phoneNumber"
-        android:layout_gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="number"
-        android:layout_marginTop="4dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="16dp"
         android:layout_marginLeft="4dp"
         android:layout_marginRight="4dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginTop="4dp"
+        android:hint="@string/phone_number"
+        android:inputType="number"
         android:singleLine="true"
-        android:textSize="20sp"
-        android:hint="@string/phone_number" />
+        android:textSize="20sp" />
 
     <Button
         android:id="@+id/btn_insert_client"
-        android:layout_gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:text="@string/insert_client" />
 
 </LinearLayout>

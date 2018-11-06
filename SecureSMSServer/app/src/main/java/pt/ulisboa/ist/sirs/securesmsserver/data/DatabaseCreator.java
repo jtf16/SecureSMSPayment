@@ -11,12 +11,6 @@ import pt.ulisboa.ist.sirs.securesmsserver.data.repositories.TransactionReposito
 public class DatabaseCreator {
 
     private TransactionRepository transactionRepository;
-
-    public DatabaseCreator(Context context, int numClients) {
-        transactionRepository = new TransactionRepository(context);
-        createRandomClients(numClients);
-    }
-
     private String[] ibans = new String[]{
             "PT50 0002 0123 1234 5678 9015 4", "PT50 0002 0123 1234 5678 9025 1",
             "PT50 0002 0123 1234 5678 9034 8", "PT50 0002 0123 1234 5678 9044 5",
@@ -34,6 +28,11 @@ public class DatabaseCreator {
             "PT50 0002 0123 1234 5678 9277 3", "PT50 0002 0123 1234 5678 9287 0",
             "PT50 0002 0123 1234 5678 9286 7", "PT50 0002 0123 1234 5678 9306 4"
     };
+
+    public DatabaseCreator(Context context, int numClients) {
+        transactionRepository = new TransactionRepository(context);
+        createRandomClients(numClients);
+    }
 
     private void createRandomClients(int numClients) {
         Client tempClient;

@@ -27,6 +27,18 @@ public abstract class AppDatabase extends RoomDatabase {
 
     private static AppDatabase INSTANCE;
 
+    public static AppDatabase getAppDatabase(Context context) {
+        if (INSTANCE == null) {
+            INSTANCE = Room.databaseBuilder(
+                    context.getApplicationContext(), AppDatabase.class, DATABASE_NAME).build();
+        }
+        return INSTANCE;
+    }
+
+    public static void destroyInstance() {
+        INSTANCE = null;
+    }
+
     // ClientDao is a class annotated with @Dao.
     public abstract ClientDao clientDao();
 
@@ -53,16 +65,4 @@ public abstract class AppDatabase extends RoomDatabase {
 
     // TransactionDao is a class annotated with @Dao.
     public abstract TransactionDao transactionDao();
-
-    public static AppDatabase getAppDatabase(Context context) {
-        if (INSTANCE == null) {
-            INSTANCE = Room.databaseBuilder(
-                    context.getApplicationContext(), AppDatabase.class, DATABASE_NAME).build();
-        }
-        return INSTANCE;
-    }
-
-    public static void destroyInstance() {
-        INSTANCE = null;
-    }
 }

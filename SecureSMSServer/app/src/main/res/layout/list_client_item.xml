@@ -8,11 +8,11 @@
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="8dp"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
-        android:paddingBottom="8dp"
-        android:paddingTop="8dp"
-        android:orientation="vertical">
+        android:paddingTop="8dp">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -22,15 +22,15 @@
 
             <TextView
                 android:id="@+id/item_iban"
-                android:layout_gravity="start"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="IBAN: PT50 1234 4321 1234 5678 9017 2"
-                android:paddingRight="8dp"
-                android:textAllCaps="true"
+                android:layout_gravity="start"
                 android:autoSizeTextType="uniform"
-                android:textColor="@android:color/black"
-                android:paddingBottom="8dp" />
+                android:paddingBottom="8dp"
+                android:paddingRight="8dp"
+                android:text="IBAN: PT50 1234 4321 1234 5678 9017 2"
+                android:textAllCaps="true"
+                android:textColor="@android:color/black" />
 
         </LinearLayout>
 
@@ -42,12 +42,12 @@
 
             <TextView
                 android:id="@+id/item_balance"
-                android:layout_gravity="start"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:autoSizeTextType="uniform"
                 android:text="Balance: 52153252.53€"
                 android:textAllCaps="true"
-                android:autoSizeTextType="uniform"
                 android:textColor="@android:color/black" />
 
         </LinearLayout>

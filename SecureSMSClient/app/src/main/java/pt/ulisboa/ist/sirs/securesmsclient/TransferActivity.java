@@ -21,6 +21,8 @@ import org.iban4j.UnsupportedCountryException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import pt.ulisboa.ist.sirs.securesmsclient.smsops.SMSSender;
+
 public class TransferActivity extends AppCompatActivity {
 
     private EditText editTextIBAN;
@@ -70,6 +72,13 @@ public class TransferActivity extends AppCompatActivity {
     }
 
     public void transferAction() {
+
+        // Get the text of the sms message.
+        String smsMessage = editTextIBAN.getText().toString() +
+                editTextAmount.getText().toString();
+
+        SMSSender.sendMessage(smsMessage);
+
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }

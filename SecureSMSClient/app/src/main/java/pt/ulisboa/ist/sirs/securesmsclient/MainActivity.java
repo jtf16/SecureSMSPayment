@@ -40,17 +40,13 @@ public class MainActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks {
 
     public static final int MY_PERMISSIONS_REQUEST_SEND_SMS = 1;
-
+    private static final int MOVEMENTS_LOADER_ID = 0;
+    private static final int CLIENT_LOADER_ID = 1;
     private TextView balanceTextView;
-
     private EditText editTextSearch;
-
     private RecyclerView mRecyclerView;
     private MovementAdapter movementAdapter;
     private LinearLayoutManager mLayoutManager;
-
-    private static final int MOVEMENTS_LOADER_ID = 0;
-    private static final int CLIENT_LOADER_ID = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -252,13 +248,12 @@ public class MainActivity extends AppCompatActivity
 
     private class SearchTextWatcher implements TextWatcher {
 
-        private MainActivity mainActivity;
-
         // means divider position is every 5th symbol
         private static final int DIVIDER_MODULO = 5;
         private static final int GROUP_SIZE = DIVIDER_MODULO - 1;
         private static final char DIVIDER = ' ';
         private static final String STRING_DIVIDER = " ";
+        private MainActivity mainActivity;
         private String previousText = "";
 
         private int deleteLength;
