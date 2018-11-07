@@ -21,15 +21,23 @@ import org.iban4j.UnsupportedCountryException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import pt.ulisboa.ist.sirs.securesmsclient.smsops.Parser;
 import pt.ulisboa.ist.sirs.securesmsclient.smsops.SMSSender;
 
 public class TransferActivity extends AppCompatActivity {
 
+    private static boolean validIBAN = false;
+    private static boolean validAmount = false;
     private EditText editTextIBAN;
     private EditText editTextAmount;
 
-    private static boolean validIBAN = false;
-    private static boolean validAmount = false;
+    public static void setValidIBAN(boolean newValidIBAN) {
+        validIBAN = newValidIBAN;
+    }
+
+    public static void setValidAmount(boolean newValidAmount) {
+        validAmount = newValidAmount;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,14 +60,6 @@ public class TransferActivity extends AppCompatActivity {
         editTextAmount.addTextChangedListener(new AmountTextWatcher());
     }
 
-    public static void setValidIBAN(boolean newValidIBAN) {
-        validIBAN = newValidIBAN;
-    }
-
-    public static void setValidAmount(boolean newValidAmount) {
-        validAmount = newValidAmount;
-    }
-
     public void doTransfer(View view) {
 
         if (validIBAN && validAmount) {
@@ -73,11 +73,10 @@ public class TransferActivity extends AppCompatActivity {
 
     public void transferAction() {
 
-        // Get the text of the sms message.
-        String smsMessage = editTextIBAN.getText().toString() +
-                editTextAmount.getText().toString();
+        String iban = editTextIBAN.getText().toString();
+        String amount = editTextAmount.getText().toString();
 
-        SMSSender.sendMessage(smsMessage);
+        SMSSender.sendMessage(Parser.parseIbanAndAmount(iban, amount));
 
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);

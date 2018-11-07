@@ -15,10 +15,8 @@ import pt.ulisboa.ist.sirs.securesmsclient.data.objects.Movement;
 public class LiveMovementsLoader extends
         AsyncTaskLoader<LiveData<List<Movement>>> {
 
-    private LiveData<List<Movement>> mData;
-
     final InterestingConfigChanges mLastConfig = new InterestingConfigChanges();
-
+    private LiveData<List<Movement>> mData;
     private AppDatabase appDatabase;
 
     public LiveMovementsLoader(Context context) {

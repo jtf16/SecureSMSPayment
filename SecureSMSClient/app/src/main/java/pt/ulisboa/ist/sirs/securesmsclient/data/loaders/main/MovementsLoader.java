@@ -14,10 +14,8 @@ import pt.ulisboa.ist.sirs.securesmsclient.data.objects.Movement;
 public class MovementsLoader extends
         AsyncTaskLoader<List<Movement>> {
 
-    private List<Movement> mData;
-
     final InterestingConfigChanges mLastConfig = new InterestingConfigChanges();
-
+    private List<Movement> mData;
     private AppDatabase appDatabase;
 
     public MovementsLoader(Context context) {

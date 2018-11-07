@@ -12,11 +12,9 @@ import pt.ulisboa.ist.sirs.securesmsclient.data.objects.Client;
 public class ClientLoader extends
         AsyncTaskLoader<Client> {
 
+    final InterestingConfigChanges mLastConfig = new InterestingConfigChanges();
     private Client mData;
     private int id;
-
-    final InterestingConfigChanges mLastConfig = new InterestingConfigChanges();
-
     private AppDatabase appDatabase;
 
     public ClientLoader(Context context, int id) {

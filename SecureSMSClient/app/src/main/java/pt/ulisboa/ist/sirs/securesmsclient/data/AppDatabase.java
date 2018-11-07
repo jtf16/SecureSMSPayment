@@ -21,18 +21,6 @@ public abstract class AppDatabase extends RoomDatabase {
 
     private static AppDatabase INSTANCE;
 
-    // ClientDao is a class annotated with @Dao.
-    public abstract ClientDao clientDao();
-
-    // LiveClientDao is a class annotated with @Dao.
-    public abstract LiveClientDao liveClientDao();
-
-    // MovementDao is a class annotated with @Dao.
-    public abstract MovementDao movementDao();
-
-    // LiveMovementDao is a class annotated with @Dao.
-    public abstract LiveMovementDao liveMovementDao();
-
     public static AppDatabase getAppDatabase(Context context) {
         if (INSTANCE == null) {
             INSTANCE = Room.databaseBuilder(
@@ -44,4 +32,16 @@ public abstract class AppDatabase extends RoomDatabase {
     public static void destroyInstance() {
         INSTANCE = null;
     }
+
+    // ClientDao is a class annotated with @Dao.
+    public abstract ClientDao clientDao();
+
+    // LiveClientDao is a class annotated with @Dao.
+    public abstract LiveClientDao liveClientDao();
+
+    // MovementDao is a class annotated with @Dao.
+    public abstract MovementDao movementDao();
+
+    // LiveMovementDao is a class annotated with @Dao.
+    public abstract LiveMovementDao liveMovementDao();
 }
