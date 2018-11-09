@@ -7,8 +7,6 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
-import android.util.Log;
-import android.widget.Toast;
 
 import pt.ulisboa.ist.sirs.securesmsserver.smsops.SMSResponse;
 
@@ -47,13 +45,9 @@ public class SMSReceiver extends BroadcastReceiver {
                     msgs[i] = SmsMessage.createFromPdu((byte[]) pdus[i]);
                 }
                 // Build the message to show.
-                strMessage += "SMS from " + msgs[i].getOriginatingAddress();
-                strMessage += " :" + msgs[i].getMessageBody() + "\n";
-                // Log and display the SMS message.
-                Log.d(SMSReceiver.class.getSimpleName(), "onReceive: " + strMessage);
-                Toast.makeText(context, strMessage, Toast.LENGTH_LONG).show();
+                strMessage += msgs[i].getMessageBody();
             }
-            SMSResponse.sendResponse(msgs[0].getOriginatingAddress(), strMessage);
+            SMSResponse.sendResponse(context, msgs[0].getOriginatingAddress(), strMessage);
         }
     }
 }

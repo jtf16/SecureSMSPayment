@@ -1,6 +1,7 @@
-package pt.ulisboa.ist.sirs.securesmsclient.smsops;
+package pt.ulisboa.ist.sirs.securesmsserver.smsops;
 
-import org.apache.commons.lang3.StringUtils;
+import org.iban4j.CountryCode;
+import org.iban4j.IbanUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,13 +31,6 @@ public class Parser {
             put(i++, String.valueOf(ch));
     }};
 
-    public static String parseIbanAndAmount(String iban, String amount) {
-        iban = StringUtils.deleteWhitespace(iban);
-        Float fAmount = Float.valueOf(amount) * 100;
-        amount = correctSize(String.valueOf(fAmount.intValue()), DEFAULT_AMOUNT_SIZE);
-        return parseMessage(iban + amount);
-    }
-
     public static String parseMessage(String message) {
         message = originalStringToBinary(message);
         return binaryToString(message);
@@ -45,6 +39,29 @@ public class Parser {
     public static String unparseMessage(String message) {
         message = stringToBinary(message);
         return binaryToOriginalString(message);
+    }
+
+    public static String getIBAN(String message) {
+
+        message = unparseMessage(message);
+
+        return message.substring(0, IbanUtil.getIbanLength(
+                CountryCode.getByCode(message.substring(0, 2))));
+    }
+
+    public static int getAmount(String message) {
+
+        message = unparseMessage(message);
+
+        int ibanSize = IbanUtil.getIbanLength(CountryCode.getByCode(
+                message.substring(0, 2)));
+
+        return Integer.parseInt(message.substring(
+                ibanSize, ibanSize + DEFAULT_AMOUNT_SIZE));
+    }
+
+    public static float getFloatAmount(String message) {
+        return (float) getAmount(message) / 100;
     }
 
     public static String correctSize(String val, int size) {
