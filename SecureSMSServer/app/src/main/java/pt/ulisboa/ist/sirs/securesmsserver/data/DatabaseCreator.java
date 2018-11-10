@@ -10,6 +10,8 @@ import pt.ulisboa.ist.sirs.securesmsserver.data.repositories.TransactionReposito
 
 public class DatabaseCreator {
 
+    private static final String DEFAULT_IBAN = "PT50 0002 0123 1234 5678 9306 4";
+    private static final String DEFAULT_PHONE = "15555215556";
     private TransactionRepository transactionRepository;
     private String[] ibans = new String[]{
             "PT50 0002 0123 1234 5678 9015 4", "PT50 0002 0123 1234 5678 9025 1",
@@ -26,12 +28,22 @@ public class DatabaseCreator {
             "PT50 0002 0123 1234 5678 9238 5", "PT50 0002 0123 1234 5678 9248 2",
             "PT50 0002 0123 1234 5678 9257 9", "PT50 0002 0123 1234 5678 9267 6",
             "PT50 0002 0123 1234 5678 9277 3", "PT50 0002 0123 1234 5678 9287 0",
-            "PT50 0002 0123 1234 5678 9286 7", "PT50 0002 0123 1234 5678 9306 4"
+            "PT50 0002 0123 1234 5678 9296 7"
     };
 
     public DatabaseCreator(Context context, int numClients) {
         transactionRepository = new TransactionRepository(context);
+        createDefaultClient();
         createRandomClients(numClients);
+    }
+
+    private void createDefaultClient() {
+        Client defaultCli = new Client();
+        defaultCli.setIBAN(DEFAULT_IBAN);
+        defaultCli.setBalance(5000);
+        Phone defaultPho = new Phone();
+        defaultPho.setPhoneNumber(DEFAULT_PHONE);
+        transactionRepository.insertClientAndPhones(defaultCli, defaultPho);
     }
 
     private void createRandomClients(int numClients) {
@@ -50,7 +62,7 @@ public class DatabaseCreator {
 
             for (int j = 0; j < numberOfClientPhones; j++) {
                 tempPhone = new Phone();
-                tempPhone.setPhoneNumber(911234000 + random.nextInt(999));
+                tempPhone.setPhoneNumber(911234000 + random.nextInt(999) + "");
                 phones[j] = tempPhone;
             }
             transactionRepository.insertClientAndPhones(tempClient, phones);

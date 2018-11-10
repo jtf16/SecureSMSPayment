@@ -27,6 +27,6 @@ public class PhoneViewHolder extends RecyclerView.ViewHolder {
 
     public void setPhone(Phone phone) {
         this.phone = phone;
-        this.phoneNumber.setText(Integer.toString(phone.getPhoneNumber()));
+        this.phoneNumber.setText(phone.getPhoneNumber());
     }
 }

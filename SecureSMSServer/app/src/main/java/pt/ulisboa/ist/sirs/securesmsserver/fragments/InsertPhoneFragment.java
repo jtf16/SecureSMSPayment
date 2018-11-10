@@ -73,7 +73,7 @@ public class InsertPhoneFragment extends DialogFragment {
         Phone phone = null;
 
         if (editTextPhone.getText().toString().length() > 0) {
-            int phone_number = Integer.valueOf(editTextPhone.getText().toString());
+            String phone_number = editTextPhone.getText().toString();
 
             phone = new Phone();
 

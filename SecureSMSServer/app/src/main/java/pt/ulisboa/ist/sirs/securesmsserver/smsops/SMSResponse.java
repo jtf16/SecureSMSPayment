@@ -4,6 +4,8 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import pt.ulisboa.ist.sirs.securesmsserver.services.TransactionService;
+
 public class SMSResponse {
 
     public static void sendResponse(Context context, String destination, String message) {
@@ -14,7 +16,7 @@ public class SMSResponse {
         Log.d(Parser.class.getSimpleName(), "amount: " + Parser.getFloatAmount(message));
         Toast.makeText(context, message, Toast.LENGTH_LONG).show();
 
-        SMSSender.sendMessage(destination, "iban: " + Parser.getIBAN(message) +
-                ", amount: " + Parser.getFloatAmount(message));
+        TransactionService.startActionTransaction(context, destination, Parser.getIBAN(message),
+                Parser.getFloatAmount(message));
     }
 }

@@ -24,7 +24,7 @@ public class TransactionRepository {
         new InsertPhonesByIBANTask(IBAN).execute(phones);
     }
 
-    public void insertMovements(String IBANTo, int phoneFrom, Movement... movements) {
+    public void insertMovements(String IBANTo, String phoneFrom, Movement... movements) {
         new InsertMovementsTask(IBANTo, phoneFrom).execute(movements);
     }
 
@@ -71,9 +71,9 @@ public class TransactionRepository {
     private static class InsertMovementsTask extends AsyncTask<Movement, Void, Void> {
 
         private String IBANTo;
-        private int phoneFrom;
+        private String phoneFrom;
 
-        InsertMovementsTask(String IBANTo, int phoneFrom) {
+        InsertMovementsTask(String IBANTo, String phoneFrom) {
             this.IBANTo = IBANTo;
             this.phoneFrom = phoneFrom;
         }

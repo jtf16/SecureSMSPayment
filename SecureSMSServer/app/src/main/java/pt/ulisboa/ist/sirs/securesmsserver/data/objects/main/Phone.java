@@ -21,7 +21,7 @@ public class Phone {
     private int uid;
 
     @ColumnInfo(name = "phone_number")
-    private int phoneNumber;
+    private String phoneNumber;
 
     @ColumnInfo(name = "client_id")
     private int clientId;
@@ -34,11 +34,11 @@ public class Phone {
         this.uid = uid;
     }
 
-    public int getPhoneNumber() {
+    public String getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(int phoneNumber) {
+    public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 

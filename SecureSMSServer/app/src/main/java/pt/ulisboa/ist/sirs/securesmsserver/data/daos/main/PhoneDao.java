@@ -29,13 +29,13 @@ public abstract class PhoneDao {
     @Query("SELECT * FROM Phone WHERE id = :id LIMIT 1")
     public abstract Phone loadPhoneById(int id);
 
-    @Query("SELECT * FROM Phone WHERE phone_number = :phone_number LIMIT 1")
-    public abstract Phone loadPhoneByPhoneNumber(int phone_number);
+    @Query("SELECT * FROM Phone WHERE phone_number LIKE :phone_number LIMIT 1")
+    public abstract Phone loadPhoneByPhoneNumber(String phone_number);
 
     @Query("SELECT * FROM Phone ORDER BY id DESC")
     public abstract List<Phone> loadAllPhones();
 
-    @Query("SELECT * FROM Phone WHERE CAST(phone_number AS TEXT)" +
+    @Query("SELECT * FROM Phone WHERE phone_number" +
             " LIKE '%' || :part_phone || '%' ORDER BY id DESC")
     public abstract List<Phone> loadPhonesByPartPhone(String part_phone);
 

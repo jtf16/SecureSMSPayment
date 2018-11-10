@@ -14,7 +14,7 @@ public abstract class LivePhoneDao {
     @Query("SELECT * FROM Phone ORDER BY id DESC")
     public abstract LiveData<List<Phone>> loadAllPhones();
 
-    @Query("SELECT * FROM Phone WHERE CAST(phone_number AS TEXT)" +
+    @Query("SELECT * FROM Phone WHERE phone_number" +
             " LIKE '%' || :part_phone || '%' ORDER BY id DESC")
     public abstract LiveData<List<Phone>> loadPhonesByPartPhone(String part_phone);
 

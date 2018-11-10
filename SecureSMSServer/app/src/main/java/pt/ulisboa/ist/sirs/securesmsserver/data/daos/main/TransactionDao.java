@@ -9,6 +9,8 @@ import android.arch.persistence.room.Update;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Date;
+
 import pt.ulisboa.ist.sirs.securesmsserver.data.objects.main.Client;
 import pt.ulisboa.ist.sirs.securesmsserver.data.objects.main.Movement;
 import pt.ulisboa.ist.sirs.securesmsserver.data.objects.main.Phone;
@@ -36,8 +38,8 @@ public abstract class TransactionDao {
     public abstract Client loadClientByIBAN(String IBAN);
 
     @Query("SELECT Client.* FROM Phone INNER JOIN Client ON " +
-            "Phone.client_id = Client.id WHERE phone_number = :phoneNumber LIMIT 1")
-    public abstract Client loadClientByPhoneNumber(int phoneNumber);
+            "Phone.client_id = Client.id WHERE phone_number LIKE :phoneNumber LIMIT 1")
+    public abstract Client loadClientByPhoneNumber(String phoneNumber);
 
     /**
      * Here will be all transactions needed
@@ -74,7 +76,7 @@ public abstract class TransactionDao {
     }
 
     @Transaction
-    public void insertMovements(String IBANTo, int phoneFrom, Movement... movements) {
+    public void insertMovements(String IBANTo, String phoneFrom, Movement... movements) {
         // Anything inside this method runs in a single transaction.
         IBANTo = StringUtils.deleteWhitespace(IBANTo);
         Client clientTo = loadClientByIBAN(IBANTo);
@@ -87,6 +89,7 @@ public abstract class TransactionDao {
                 if (movement != null) {
                     movement.setClientFrom(clientFrom.getUid());
                     movement.setClientTo(clientTo.getUid());
+                    movement.setDate(new Date());
 
                     if (clientFrom.getBalance() < movement.getAmount()) {
                         // Movement should not be processed
@@ -97,6 +100,7 @@ public abstract class TransactionDao {
                         clientFrom.setBalance(clientFrom.getBalance() - movement.getAmount());
                         clientTo.setBalance(clientTo.getBalance() + movement.getAmount());
                         updateClients(clientFrom, clientTo);
+
                         movement.setState("Processed");
                     }
                     insertMovements(movement);
