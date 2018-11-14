@@ -14,6 +14,7 @@ import java.util.Date;
 import pt.ulisboa.ist.sirs.securesmsserver.data.objects.main.Client;
 import pt.ulisboa.ist.sirs.securesmsserver.data.objects.main.Movement;
 import pt.ulisboa.ist.sirs.securesmsserver.data.objects.main.Phone;
+import pt.ulisboa.ist.sirs.securesmsserver.smsops.SMSResponse;
 
 @Dao
 public abstract class TransactionDao {
@@ -76,13 +77,17 @@ public abstract class TransactionDao {
     }
 
     @Transaction
-    public void insertMovements(String IBANTo, String phoneFrom, Movement... movements) {
+    public int insertMovements(String IBANTo, String phoneFrom, Movement... movements) {
         // Anything inside this method runs in a single transaction.
-        IBANTo = StringUtils.deleteWhitespace(IBANTo);
-        Client clientTo = loadClientByIBAN(IBANTo);
+        Client clientTo = loadClientByIBAN(StringUtils.deleteWhitespace(IBANTo));
         Client clientFrom = loadClientByPhoneNumber(phoneFrom);
 
-        if (clientTo != null && clientFrom != null && movements != null) {
+        if (clientTo == null) {
+            return SMSResponse.NONEXITENT_DESTINATION;
+        } else if (clientFrom == null) {
+            return SMSResponse.NONEXITENT_SENDER;
+        }
+        if (movements != null) {
             // All parts needed in a movement exist
 
             for (Movement movement : movements) {
@@ -94,18 +99,21 @@ public abstract class TransactionDao {
                     if (clientFrom.getBalance() < movement.getAmount()) {
                         // Movement should not be processed
                         movement.setState("Not processed");
-                    } else {
-                        // Movement should be processed
-                        // Update sender and receiver clients balance
-                        clientFrom.setBalance(clientFrom.getBalance() - movement.getAmount());
-                        clientTo.setBalance(clientTo.getBalance() + movement.getAmount());
-                        updateClients(clientFrom, clientTo);
-
-                        movement.setState("Processed");
+                        insertMovements(movement);
+                        return SMSResponse.INSUFFICIENT_BALANCE;
                     }
+                    // Movement should be processed
+                    // Update sender and receiver clients balance
+                    clientFrom.setBalance(clientFrom.getBalance() - movement.getAmount());
+                    clientTo.setBalance(clientTo.getBalance() + movement.getAmount());
+                    updateClients(clientFrom, clientTo);
+
+                    movement.setState("Processed");
                     insertMovements(movement);
                 }
             }
+            return (int) (clientFrom.getBalance() * 100);
         }
+        return SMSResponse.NO_MOVEMENTS;
     }
 }

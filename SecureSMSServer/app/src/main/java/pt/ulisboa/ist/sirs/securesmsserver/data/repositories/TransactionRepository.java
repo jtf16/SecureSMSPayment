@@ -7,6 +7,7 @@ import pt.ulisboa.ist.sirs.securesmsserver.data.AppDatabase;
 import pt.ulisboa.ist.sirs.securesmsserver.data.objects.main.Client;
 import pt.ulisboa.ist.sirs.securesmsserver.data.objects.main.Movement;
 import pt.ulisboa.ist.sirs.securesmsserver.data.objects.main.Phone;
+import pt.ulisboa.ist.sirs.securesmsserver.smsops.SMSResponse;
 
 public class TransactionRepository {
 
@@ -68,7 +69,7 @@ public class TransactionRepository {
         }
     }
 
-    private static class InsertMovementsTask extends AsyncTask<Movement, Void, Void> {
+    private static class InsertMovementsTask extends AsyncTask<Movement, Void, Integer> {
 
         private String IBANTo;
         private String phoneFrom;
@@ -79,14 +80,14 @@ public class TransactionRepository {
         }
 
         @Override
-        protected Void doInBackground(Movement... movements) {
-            appDatabase.transactionDao().insertMovements(IBANTo, phoneFrom, movements);
-            return null;
+        protected Integer doInBackground(Movement... movements) {
+            return appDatabase.transactionDao().insertMovements(IBANTo, phoneFrom, movements);
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
+        protected void onPostExecute(Integer statusId) {
+            SMSResponse.handleTransaction(phoneFrom, statusId);
+            super.onPostExecute(statusId);
         }
     }
 }

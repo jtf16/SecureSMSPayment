@@ -1,22 +1,29 @@
 package pt.ulisboa.ist.sirs.securesmsserver.smsops;
 
 import android.content.Context;
-import android.util.Log;
-import android.widget.Toast;
 
 import pt.ulisboa.ist.sirs.securesmsserver.services.TransactionService;
 
 public class SMSResponse {
 
-    public static void sendResponse(Context context, String destination, String message) {
+    public static final int TRANSACTION_OK = 0;
+    public static final int NONEXITENT_DESTINATION = -1;
+    public static final int NONEXITENT_SENDER = -2;
+    public static final int INSUFFICIENT_BALANCE = -3;
+    public static final int NO_MOVEMENTS = -4;
 
-        // Log and display the SMS message.
-        Log.d(Parser.class.getSimpleName(), "onReceive: " + message);
-        Log.d(Parser.class.getSimpleName(), "iban: " + Parser.getIBAN(message));
-        Log.d(Parser.class.getSimpleName(), "amount: " + Parser.getFloatAmount(message));
-        Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+    public static void handleReceived(Context context, String destination, String message) {
 
         TransactionService.startActionTransaction(context, destination, Parser.getIBAN(message),
                 Parser.getFloatAmount(message));
+    }
+
+    public static void handleTransaction(String sender, int statusId) {
+        // If statusId >= 0 (TRANSACTION_OK) then it's the balance else it's an error
+        String message = Math.abs(statusId) + "";
+        if (statusId >= TRANSACTION_OK) {
+            message = TRANSACTION_OK + new StringBuffer(statusId + "").reverse().toString();
+        }
+        SMSSender.sendMessage(sender, Parser.parseMessage(message));
     }
 }

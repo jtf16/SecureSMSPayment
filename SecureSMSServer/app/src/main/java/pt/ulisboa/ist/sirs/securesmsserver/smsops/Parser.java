@@ -4,6 +4,7 @@ import org.iban4j.CountryCode;
 import org.iban4j.IbanUtil;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -36,14 +37,14 @@ public class Parser {
         return binaryToString(message);
     }
 
-    public static String unparseMessage(String message) {
+    public static String unparseMessage(List lettersPos, String message) {
         message = stringToBinary(message);
-        return binaryToOriginalString(message);
+        return binaryToOriginalString(lettersPos, message);
     }
 
     public static String getIBAN(String message) {
 
-        message = unparseMessage(message);
+        message = unparseMessage(Arrays.asList(0, 1), message);
 
         return message.substring(0, IbanUtil.getIbanLength(
                 CountryCode.getByCode(message.substring(0, 2))));
@@ -51,7 +52,7 @@ public class Parser {
 
     public static int getAmount(String message) {
 
-        message = unparseMessage(message);
+        message = unparseMessage(Arrays.asList(0, 1), message);
 
         int ibanSize = IbanUtil.getIbanLength(CountryCode.getByCode(
                 message.substring(0, 2)));
@@ -102,12 +103,17 @@ public class Parser {
         return result;
     }
 
-    public static String binaryToOriginalString(String s) {
+    public static String binaryToOriginalString(List lettersPos, String s) {
         List<String> list = new ArrayList<>();
-        list.add("1" + s.substring(0, 5));
-        list.add("1" + s.substring(5, 10));
-        for (int i = 10; i + 4 <= s.length(); i += 4) {
-            list.add(s.substring(i, i + 4));
+        int j = 0;
+        for (int i = 0; i + 4 <= s.length(); i += 4) {
+            if (lettersPos.contains(j)) {
+                list.add("1" + s.substring(i, i + 5));
+                i++;
+            } else {
+                list.add(s.substring(i, i + 4));
+            }
+            j++;
         }
         String result = "";
         for (String s1 : list) {

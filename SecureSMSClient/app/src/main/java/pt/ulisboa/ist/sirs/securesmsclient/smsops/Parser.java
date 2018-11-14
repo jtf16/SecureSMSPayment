@@ -42,9 +42,30 @@ public class Parser {
         return binaryToString(message);
     }
 
-    public static String unparseMessage(String message) {
+    public static String unparseMessage(List lettersPos, String message) {
+        lettersPos = lettersPos == null ? new ArrayList() : lettersPos;
         message = stringToBinary(message);
-        return binaryToOriginalString(message);
+        return binaryToOriginalString(lettersPos, message);
+    }
+
+    public static int getCode(String message) {
+
+        message = unparseMessage(null, message);
+
+        return Integer.parseInt(message.substring(0, 1));
+    }
+
+    public static int getBalance(String message) {
+
+        message = unparseMessage(null, message);
+
+        message = new StringBuffer(
+                message.substring(1, message.length())).reverse().toString();
+        return Integer.parseInt(message);
+    }
+
+    public static float getFloatBalance(String message) {
+        return (float) getBalance(message) / 100;
     }
 
     public static String correctSize(String val, int size) {
@@ -85,12 +106,17 @@ public class Parser {
         return result;
     }
 
-    public static String binaryToOriginalString(String s) {
+    public static String binaryToOriginalString(List lettersPos, String s) {
         List<String> list = new ArrayList<>();
-        list.add("1" + s.substring(0, 5));
-        list.add("1" + s.substring(5, 10));
-        for (int i = 10; i + 4 <= s.length(); i += 4) {
-            list.add(s.substring(i, i + 4));
+        int j = 0;
+        for (int i = 0; i + 4 <= s.length(); i += 4) {
+            if (lettersPos.contains(j)) {
+                list.add("1" + s.substring(i, i + 5));
+                i++;
+            } else {
+                list.add(s.substring(i, i + 4));
+            }
+            j++;
         }
         String result = "";
         for (String s1 : list) {

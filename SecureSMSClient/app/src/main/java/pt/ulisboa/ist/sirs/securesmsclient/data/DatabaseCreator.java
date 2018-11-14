@@ -50,8 +50,10 @@ public class DatabaseCreator {
 
         Client tempClient = new Client();
         tempClient.setUid(0);
-        tempClient.setIBAN(ibans[random.nextInt(ibansRange)]);
-        tempClient.setBalance(100 * random.nextInt(50));
+        //tempClient.setIBAN(ibans[random.nextInt(ibansRange)]);
+        tempClient.setIBAN("PT50 0002 0123 1234 5678 9306 4");
+        //tempClient.setBalance(100 * random.nextInt(50));
+        tempClient.setBalance(5000);
 
         clientRepository.insertClient(tempClient);
     }

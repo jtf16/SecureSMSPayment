@@ -4,12 +4,8 @@ import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 
-import pt.ulisboa.ist.sirs.securesmsserver.data.AppDatabase;
-import pt.ulisboa.ist.sirs.securesmsserver.data.objects.main.Client;
 import pt.ulisboa.ist.sirs.securesmsserver.data.objects.main.Movement;
-import pt.ulisboa.ist.sirs.securesmsserver.data.objects.main.Phone;
 import pt.ulisboa.ist.sirs.securesmsserver.data.repositories.TransactionRepository;
-import pt.ulisboa.ist.sirs.securesmsserver.smsops.SMSSender;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
@@ -64,26 +60,10 @@ public class TransactionService extends IntentService {
      */
     private void handleActionTransaction(String sender, String destIban, float amount) {
 
-        AppDatabase appDatabase = AppDatabase.getAppDatabase(getApplicationContext());
-        Phone pho = appDatabase.phoneDao().loadPhoneByPhoneNumber(sender);
-        if (pho != null) {
-            Client destCli = appDatabase.clientDao().loadClientByIBAN(destIban);
-            if (destCli != null) {
-                Client senderCli = appDatabase.clientDao().loadClientById(pho.getClientId());
-                if (senderCli != null) {
-                    TransactionRepository transactionRepository =
-                            new TransactionRepository(getApplicationContext());
-                    Movement mov = new Movement();
-                    mov.setAmount(amount);
-                    transactionRepository.insertMovements(destIban, sender, mov);
-                    SMSSender.sendMessage(sender, "iban: " + destIban +
-                            ", amount: " + amount);
-                }
-            } else {
-                SMSSender.sendMessage(sender, "destination iban not in the database");
-            }
-        } else {
-            SMSSender.sendMessage(sender, "You are not in the database");
-        }
+        TransactionRepository transactionRepository =
+                new TransactionRepository(getApplicationContext());
+        Movement mov = new Movement();
+        mov.setAmount(amount);
+        transactionRepository.insertMovements(destIban, sender, mov);
     }
 }

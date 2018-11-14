@@ -47,7 +47,7 @@ public class SMSReceiver extends BroadcastReceiver {
                 // Build the message to show.
                 strMessage += msgs[i].getMessageBody();
             }
-            SMSResponse.sendResponse(context, msgs[0].getOriginatingAddress(), strMessage);
+            SMSResponse.handleReceived(context, msgs[0].getOriginatingAddress(), strMessage);
         }
     }
 }
