@@ -7,6 +7,7 @@ import android.util.Base64;
 import java.security.KeyFactory;
 import java.security.KeyPairGenerator;
 import java.security.KeyStore;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.Signature;
@@ -24,6 +25,7 @@ public class SecurityManager {
     private static final String ECDSA_KEY_PAIR_ALIAS = "ECDSAKeyPair";
     private static final String AES_KEY_ALIAS = "AESKey";
     private static final String SIGNATURE_ALGORITHM = "SHA256withECDSA";
+    private static final String DIGEST_INSTANCE = "SHA-256";
     private static final String TRANSFORMATION = "AES/GCM/NoPadding";
     //private static final String TRANSFORMATION = "AES/CBC/PKCS7PADDING";
 
@@ -50,6 +52,17 @@ public class SecurityManager {
         s.initVerify(byteArrayToPubKey(pubKey));
         s.update(data);
         return s.verify(signature);
+    }
+
+    public static byte[] hashData(byte[] data) throws Exception {
+        MessageDigest digest = MessageDigest.getInstance(DIGEST_INSTANCE);
+        digest.update(data);
+        return digest.digest();
+    }
+
+    public static boolean verifyHash(byte[] data, byte[] hash) throws Exception {
+        MessageDigest digest = MessageDigest.getInstance(DIGEST_INSTANCE);
+        return digest.isEqual(hash, hashData(data));
     }
 
     public static Pair encryptData(byte[] data) throws Exception {
