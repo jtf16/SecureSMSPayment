@@ -13,11 +13,19 @@ import java.security.Signature;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 
+import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.GCMParameterSpec;
+
 public class SecurityManager {
 
     private static final String KEYSTORE_PROVIDER = "AndroidKeyStore";
     private static final String ECDSA_KEY_PAIR_ALIAS = "ECDSAKeyPair";
+    private static final String AES_KEY_ALIAS = "AESKey";
     private static final String SIGNATURE_ALGORITHM = "SHA256withECDSA";
+    private static final String TRANSFORMATION = "AES/GCM/NoPadding";
+    //private static final String TRANSFORMATION = "AES/CBC/PKCS7PADDING";
 
     private static KeyStore loadKeyStore() throws Exception {
         KeyStore ks = KeyStore.getInstance(KEYSTORE_PROVIDER);
@@ -28,12 +36,10 @@ public class SecurityManager {
     public static byte[] signData(byte[] data) throws Exception {
 
         KeyStore ks = loadKeyStore();
-        KeyStore.Entry entry = ks.getEntry(ECDSA_KEY_PAIR_ALIAS, null);
-        if (!(entry instanceof KeyStore.PrivateKeyEntry)) {
-            return null;
-        }
+        KeyStore.PrivateKeyEntry entry = (KeyStore.PrivateKeyEntry) ks
+                .getEntry(ECDSA_KEY_PAIR_ALIAS, null);
         Signature s = Signature.getInstance(SIGNATURE_ALGORITHM);
-        s.initSign(((KeyStore.PrivateKeyEntry) entry).getPrivateKey());
+        s.initSign(entry.getPrivateKey());
         s.update(data);
         return s.sign();
     }
@@ -44,6 +50,47 @@ public class SecurityManager {
         s.initVerify(byteArrayToPubKey(pubKey));
         s.update(data);
         return s.verify(signature);
+    }
+
+    public static Pair encryptData(byte[] data) throws Exception {
+
+        KeyStore ks = loadKeyStore();
+        KeyStore.SecretKeyEntry secretKeyEntry = (KeyStore.SecretKeyEntry) ks
+                .getEntry(AES_KEY_ALIAS, null);
+        SecretKey secretKey = secretKeyEntry.getSecretKey();
+
+        Cipher cipher = Cipher.getInstance(TRANSFORMATION);
+        cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+        return new Pair(cipher.doFinal(data), cipher.getIV());
+    }
+
+    public static byte[] decryptData(byte[] data, byte[] iv) throws Exception {
+
+        KeyStore ks = loadKeyStore();
+        KeyStore.SecretKeyEntry secretKeyEntry = (KeyStore.SecretKeyEntry) ks
+                .getEntry(AES_KEY_ALIAS, null);
+        SecretKey secretKey = secretKeyEntry.getSecretKey();
+
+        Cipher cipher = Cipher.getInstance(TRANSFORMATION);
+        GCMParameterSpec spec = new GCMParameterSpec(128, iv);
+        cipher.init(Cipher.DECRYPT_MODE, secretKey, spec);
+        return cipher.doFinal(data);
+    }
+
+    public static void createSecretKey() throws Exception {
+        final KeyGenerator keyGenerator = KeyGenerator
+                .getInstance(KeyProperties.KEY_ALGORITHM_AES, KEYSTORE_PROVIDER);
+
+        final KeyGenParameterSpec keyGenParameterSpec =
+                new KeyGenParameterSpec.Builder(AES_KEY_ALIAS,
+                        KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
+                        .setBlockModes(KeyProperties.BLOCK_MODE_GCM,
+                                KeyProperties.BLOCK_MODE_CBC)
+                        .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE,
+                                KeyProperties.ENCRYPTION_PADDING_PKCS7)
+                        .build();
+        keyGenerator.init(keyGenParameterSpec);
+        keyGenerator.generateKey();
     }
 
     public static void createKeyPair() throws Exception {
@@ -81,11 +128,9 @@ public class SecurityManager {
     public static PublicKey getPublicKey() {
         try {
             KeyStore ks = loadKeyStore();
-            KeyStore.Entry entry = ks.getEntry(ECDSA_KEY_PAIR_ALIAS, null);
-            if (!(entry instanceof KeyStore.PrivateKeyEntry)) {
-                return null;
-            }
-            return ((KeyStore.PrivateKeyEntry) entry).getCertificate().getPublicKey();
+            KeyStore.PrivateKeyEntry entry = (KeyStore.PrivateKeyEntry) ks
+                    .getEntry(ECDSA_KEY_PAIR_ALIAS, null);
+            return entry.getCertificate().getPublicKey();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -98,5 +143,24 @@ public class SecurityManager {
 
     public static byte[] stringToByteArray(String data) {
         return Base64.decode(data, Base64.NO_WRAP);
+    }
+
+    public static class Pair {
+
+        private byte[] data;
+        private byte[] iv;
+
+        Pair(byte[] data, byte[] iv) {
+            this.data = data;
+            this.iv = iv;
+        }
+
+        public byte[] getData() {
+            return data;
+        }
+
+        public byte[] getIv() {
+            return iv;
+        }
     }
 }
