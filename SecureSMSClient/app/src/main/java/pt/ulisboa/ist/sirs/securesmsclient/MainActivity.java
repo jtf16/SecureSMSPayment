@@ -35,6 +35,7 @@ import pt.ulisboa.ist.sirs.securesmsclient.data.loaders.live.LiveMovementsByPart
 import pt.ulisboa.ist.sirs.securesmsclient.data.objects.Client;
 import pt.ulisboa.ist.sirs.securesmsclient.data.objects.Movement;
 import pt.ulisboa.ist.sirs.securesmsclient.recyclerviews.adapters.MovementAdapter;
+import pt.ulisboa.ist.sirs.securesmsclient.security.SecurityManager;
 
 public class MainActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks {
@@ -54,6 +55,13 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
 
         checkForSmsPermission();
+
+        try {
+            SecurityManager.createSecretKey(SecurityManager.hashData("ABCD".getBytes()),
+                    SecurityManager.SHARED_KEY);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         DatabaseCreator databaseCreator =
                 new DatabaseCreator(getApplicationContext(), 3);

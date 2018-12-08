@@ -2,6 +2,7 @@ package pt.ulisboa.ist.sirs.securesmsclient.security;
 
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
+import android.security.keystore.KeyProtection;
 import android.util.Base64;
 
 import java.security.KeyFactory;
@@ -18,9 +19,12 @@ import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 
 public class SecurityManager {
 
+    public static final String SHARED_KEY = "SharedKey";
+    public static final String SESSION_KEY = "SessionKey";
     private static final String KEYSTORE_PROVIDER = "AndroidKeyStore";
     private static final String ECDSA_KEY_PAIR_ALIAS = "ECDSAKeyPair";
     private static final String AES_KEY_ALIAS = "AESKey";
@@ -65,11 +69,11 @@ public class SecurityManager {
         return digest.isEqual(hash, hashData(data));
     }
 
-    public static Pair encryptData(byte[] data) throws Exception {
+    public static Pair encryptData(byte[] data, String alias) throws Exception {
 
         KeyStore ks = loadKeyStore();
         KeyStore.SecretKeyEntry secretKeyEntry = (KeyStore.SecretKeyEntry) ks
-                .getEntry(AES_KEY_ALIAS, null);
+                .getEntry(alias, null);
         SecretKey secretKey = secretKeyEntry.getSecretKey();
 
         Cipher cipher = Cipher.getInstance(TRANSFORMATION);
@@ -77,11 +81,11 @@ public class SecurityManager {
         return new Pair(cipher.doFinal(data), cipher.getIV());
     }
 
-    public static byte[] decryptData(byte[] data, byte[] iv) throws Exception {
+    public static byte[] decryptData(byte[] data, byte[] iv, String alias) throws Exception {
 
         KeyStore ks = loadKeyStore();
         KeyStore.SecretKeyEntry secretKeyEntry = (KeyStore.SecretKeyEntry) ks
-                .getEntry(AES_KEY_ALIAS, null);
+                .getEntry(alias, null);
         SecretKey secretKey = secretKeyEntry.getSecretKey();
 
         Cipher cipher = Cipher.getInstance(TRANSFORMATION);
@@ -104,6 +108,22 @@ public class SecurityManager {
                         .build();
         keyGenerator.init(keyGenParameterSpec);
         keyGenerator.generateKey();
+    }
+
+    public static void createSecretKey(byte[] key, String alias) throws Exception {
+        SecretKey secretKey = new SecretKeySpec(key, 0, key.length, KeyProperties.KEY_ALGORITHM_AES);
+        KeyStore keyStore = KeyStore.getInstance(KEYSTORE_PROVIDER);
+        keyStore.load(null);
+        keyStore.setEntry(
+                alias,
+                new KeyStore.SecretKeyEntry(secretKey),
+                new KeyProtection.Builder(KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
+                        .setBlockModes(KeyProperties.BLOCK_MODE_GCM,
+                                KeyProperties.BLOCK_MODE_CBC)
+                        .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE,
+                                KeyProperties.ENCRYPTION_PADDING_PKCS7)
+                        .setRandomizedEncryptionRequired(false)
+                        .build());
     }
 
     public static void createKeyPair() throws Exception {

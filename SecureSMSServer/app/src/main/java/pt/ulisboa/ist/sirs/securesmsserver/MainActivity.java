@@ -13,6 +13,7 @@ import pt.ulisboa.ist.sirs.securesmsserver.data.DatabaseCreator;
 import pt.ulisboa.ist.sirs.securesmsserver.fragments.ClientsFragment;
 import pt.ulisboa.ist.sirs.securesmsserver.fragments.MovementsFragment;
 import pt.ulisboa.ist.sirs.securesmsserver.fragments.PhonesFragment;
+import pt.ulisboa.ist.sirs.securesmsserver.security.SecurityManager;
 
 public class MainActivity extends AppCompatActivity implements
         ClientsFragment.OnClientsFragmentInteractionListener,
@@ -26,6 +27,13 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
 
         checkForSmsPermission();
+
+        try {
+            SecurityManager.createSecretKey(SecurityManager.hashData("ABCD".getBytes()),
+                    SecurityManager.SHARED_KEY);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         DatabaseCreator databaseCreator =
                 new DatabaseCreator(getApplicationContext(), 3);

@@ -21,6 +21,7 @@ import org.iban4j.UnsupportedCountryException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import pt.ulisboa.ist.sirs.securesmsclient.security.SecurityManager;
 import pt.ulisboa.ist.sirs.securesmsclient.smsops.Parser;
 import pt.ulisboa.ist.sirs.securesmsclient.smsops.SMSSender;
 
@@ -76,7 +77,7 @@ public class TransferActivity extends AppCompatActivity {
         String iban = editTextIBAN.getText().toString();
         String amount = editTextAmount.getText().toString();
 
-        SMSSender.sendMessage(Parser.parseIbanAndAmount(iban, amount));
+        SMSSender.sendMessage(Parser.parseIbanAndAmount(iban, amount), SecurityManager.SHARED_KEY);
 
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
