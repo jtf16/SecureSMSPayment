@@ -25,8 +25,9 @@ public class TransactionRepository {
         new InsertPhonesByIBANTask(IBAN).execute(phones);
     }
 
-    public void insertMovements(String IBANTo, String phoneFrom, Movement... movements) {
-        new InsertMovementsTask(IBANTo, phoneFrom).execute(movements);
+    public void insertMovements(String IBANTo, String phoneFrom, String iv,
+                                Movement... movements) {
+        new InsertMovementsTask(IBANTo, phoneFrom, iv).execute(movements);
     }
 
     private static class InsertClientPhonesTask extends AsyncTask<Phone, Void, Void> {
@@ -73,15 +74,17 @@ public class TransactionRepository {
 
         private String IBANTo;
         private String phoneFrom;
+        private String iv;
 
-        InsertMovementsTask(String IBANTo, String phoneFrom) {
+        InsertMovementsTask(String IBANTo, String phoneFrom, String iv) {
             this.IBANTo = IBANTo;
             this.phoneFrom = phoneFrom;
+            this.iv = iv;
         }
 
         @Override
         protected Integer doInBackground(Movement... movements) {
-            return appDatabase.transactionDao().insertMovements(IBANTo, phoneFrom, movements);
+            return appDatabase.transactionDao().insertMovements(IBANTo, phoneFrom, iv, movements);
         }
 
         @Override

@@ -12,6 +12,7 @@ public class SMSResponse {
     public static final int NONEXITENT_SENDER = -2;
     public static final int INSUFFICIENT_BALANCE = -3;
     public static final int NO_MOVEMENTS = -4;
+    public static final int REPLAY_ATTACK = -5;
 
     public static void handleReceived(Context context, String destination, String message) {
 
@@ -46,7 +47,7 @@ public class SMSResponse {
             if (SecurityManager.verifyHash(message.getBytes()
                     , SecurityManager.stringToByteArray(hash))) {
                 TransactionService.startActionTransaction(context, destination, Parser.getIBAN(message),
-                        Parser.getFloatAmount(message));
+                        Parser.getFloatAmount(message), iv);
             }
         } catch (Exception e) {
             e.printStackTrace();

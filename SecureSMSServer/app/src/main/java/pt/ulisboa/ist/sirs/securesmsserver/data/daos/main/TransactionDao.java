@@ -42,6 +42,9 @@ public abstract class TransactionDao {
             "Phone.client_id = Client.id WHERE phone_number LIKE :phoneNumber LIMIT 1")
     public abstract Client loadClientByPhoneNumber(String phoneNumber);
 
+    @Query("SELECT * FROM Movement WHERE iv LIKE :iv LIMIT 1")
+    public abstract Movement loadMovementByIv(String iv);
+
     /**
      * Here will be all transactions needed
      */
@@ -77,15 +80,19 @@ public abstract class TransactionDao {
     }
 
     @Transaction
-    public int insertMovements(String IBANTo, String phoneFrom, Movement... movements) {
+    public int insertMovements(String IBANTo, String phoneFrom, String iv,
+                               Movement... movements) {
         // Anything inside this method runs in a single transaction.
         Client clientTo = loadClientByIBAN(StringUtils.deleteWhitespace(IBANTo));
         Client clientFrom = loadClientByPhoneNumber(phoneFrom);
+        Movement movementByIv = loadMovementByIv(iv);
 
         if (clientTo == null) {
             return SMSResponse.NONEXITENT_DESTINATION;
         } else if (clientFrom == null) {
             return SMSResponse.NONEXITENT_SENDER;
+        } else if (movementByIv != null) {
+            return SMSResponse.REPLAY_ATTACK;
         }
         if (movements != null) {
             // All parts needed in a movement exist
@@ -95,6 +102,7 @@ public abstract class TransactionDao {
                     movement.setClientFrom(clientFrom.getUid());
                     movement.setClientTo(clientTo.getUid());
                     movement.setDate(new Date());
+                    movement.setIv(iv);
 
                     if (clientFrom.getBalance() < movement.getAmount()) {
                         // Movement should not be processed

@@ -38,6 +38,9 @@ public class Movement {
     @ColumnInfo(name = "state")
     private String state;
 
+    @ColumnInfo(name = "iv")
+    private String iv;
+
     public int getUid() {
         return uid;
     }
@@ -84,5 +87,13 @@ public class Movement {
 
     public void setState(String state) {
         this.state = state;
+    }
+
+    public String getIv() {
+        return iv;
+    }
+
+    public void setIv(String iv) {
+        this.iv = iv;
     }
 }

@@ -20,6 +20,7 @@ public class TransactionService extends IntentService {
     private static final String SENDER = "sender";
     private static final String DESTINATION_IBAN = "destinationIban";
     private static final String AMOUNT = "amount";
+    private static final String IV = "iv";
 
     public TransactionService() {
         super("TransactionService");
@@ -32,12 +33,13 @@ public class TransactionService extends IntentService {
      * @see IntentService
      */
     public static void startActionTransaction(Context context, String sender,
-                                              String destIban, float amount) {
+                                              String destIban, float amount, String iv) {
         Intent intent = new Intent(context, TransactionService.class);
         intent.setAction(ACTION_TRANSACTION);
         intent.putExtra(SENDER, sender);
         intent.putExtra(DESTINATION_IBAN, destIban);
         intent.putExtra(AMOUNT, amount);
+        intent.putExtra(IV, iv);
         context.startService(intent);
     }
 
@@ -49,7 +51,8 @@ public class TransactionService extends IntentService {
                 final String param1 = intent.getStringExtra(SENDER);
                 final String param2 = intent.getStringExtra(DESTINATION_IBAN);
                 final float param3 = intent.getFloatExtra(AMOUNT, 0);
-                handleActionTransaction(param1, param2, param3);
+                final String param4 = intent.getStringExtra(IV);
+                handleActionTransaction(param1, param2, param3, param4);
             }
         }
     }
@@ -58,12 +61,13 @@ public class TransactionService extends IntentService {
      * Handle action Transaction in the provided background thread with the provided
      * parameters.
      */
-    private void handleActionTransaction(String sender, String destIban, float amount) {
+    private void handleActionTransaction(String sender, String destIban, float amount,
+                                         String iv) {
 
         TransactionRepository transactionRepository =
                 new TransactionRepository(getApplicationContext());
         Movement mov = new Movement();
         mov.setAmount(amount);
-        transactionRepository.insertMovements(destIban, sender, mov);
+        transactionRepository.insertMovements(destIban, sender, iv, mov);
     }
 }

@@ -14,6 +14,7 @@ public class SMSResponse {
     public static final int NONEXITENT_SENDER = -2;
     public static final int INSUFFICIENT_BALANCE = -3;
     public static final int NO_MOVEMENTS = -4;
+    public static final int REPLAY_ATTACK = -5;
 
     public static void handleReceived(Context context, String destination, String message) {
 
@@ -56,6 +57,10 @@ public class SMSResponse {
                             break;
                         case -NO_MOVEMENTS:
                             log = "Couldn't perform that movement";
+                            break;
+                        case -REPLAY_ATTACK:
+                            log = "Nounce already used";
+                            break;
                     }
                     Toast.makeText(context, log, Toast.LENGTH_LONG).show();
                 }
