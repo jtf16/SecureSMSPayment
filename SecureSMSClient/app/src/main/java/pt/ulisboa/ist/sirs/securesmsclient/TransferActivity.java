@@ -1,8 +1,10 @@
 package pt.ulisboa.ist.sirs.securesmsclient;
 
 import android.Manifest;
+import android.app.KeyguardManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -26,6 +28,8 @@ import pt.ulisboa.ist.sirs.securesmsclient.smsops.Parser;
 import pt.ulisboa.ist.sirs.securesmsclient.smsops.SMSSender;
 
 public class TransferActivity extends AppCompatActivity {
+
+    private static final int LOCK_REQUEST_CODE = 221;
 
     private static boolean validIBAN = false;
     private static boolean validAmount = false;
@@ -59,6 +63,32 @@ public class TransferActivity extends AppCompatActivity {
     private void setEditTextAmount() {
         editTextAmount = (EditText) findViewById(R.id.amount);
         editTextAmount.addTextChangedListener(new AmountTextWatcher());
+    }
+
+    private void authenticateApp() {
+        KeyguardManager keyguardManager = (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Intent i = keyguardManager.createConfirmDeviceCredentialIntent(
+                    "Tranfer", "Authenticate yourself in order to do the transfer");
+            try {
+                startActivityForResult(i, LOCK_REQUEST_CODE);
+            } catch (Exception e) {
+                transferAction();
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case LOCK_REQUEST_CODE:
+                if (resultCode == RESULT_OK) {
+                    transferAction();
+                }
+                break;
+        }
     }
 
     public void doTransfer(View view) {
@@ -97,7 +127,7 @@ public class TransferActivity extends AppCompatActivity {
                     MainActivity.MY_PERMISSIONS_REQUEST_SEND_SMS);
         } else {
             // Permission already granted.
-            transferAction();
+            authenticateApp();
         }
     }
 
@@ -118,7 +148,7 @@ public class TransferActivity extends AppCompatActivity {
                 if (permissions[0].equalsIgnoreCase(Manifest.permission.SEND_SMS)
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // Permission was granted.
-                    transferAction();
+                    authenticateApp();
                 } else {
                     // Permission denied. Try later when it's needed
                     // MY_PERMISSIONS_REQUEST_SEND_SMS is an app-defined int constant.
